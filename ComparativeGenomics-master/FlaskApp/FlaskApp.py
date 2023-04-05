@@ -9,8 +9,12 @@ from hadlers.counter import countFunctions
 from hadlers.visualize import buildPlots
 from hadlers.validator import validate
 from sys import getsizeof
+import os
 
 from logging.config import dictConfig
+
+import settings
+
 
 dictConfig({
     'version': 1,
@@ -34,11 +38,12 @@ data = Data()
 allowed_file_types = ['csv']
 
 if data.getRastCls().shape[0] == 0:
-        data.setRastCls(pl.read_csv('static/csvFiles/rastClassification.csv'))
+    path_to_rast_classification = os.path.join(settings.ROOT_DIR, 'static/csvFiles/rastClassification.csv')
+    data.setRastCls(pl.read_csv(path_to_rast_classification))
 
 if getsizeof(data.getHierarchy):
-        hierarchy = displayClassification(data)
-        data.setHierarchy(hierarchy)
+    hierarchy = displayClassification(data)
+    data.setHierarchy(hierarchy)
 
 @app.route('/')
 def index():
@@ -119,4 +124,4 @@ def uploadBreakdown():
     return  render_template("breakdown.html", df=data.getBreakdown(), error=error)
 
 if __name__ == "__main__":
-  app.run(debug=True)
+    app.run(debug=settings.DEBUG)

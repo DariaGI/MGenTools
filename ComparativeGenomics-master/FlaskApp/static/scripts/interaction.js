@@ -5,14 +5,19 @@ function chooseAll(source) {
         var data_name = 'categories';
         var tag_name = 'name';
         var ctgButtons = document.getElementsByName("ctgLabel");
-        for (i = 0; i < ctgButtons.length; i++) {
-            if (source.checked) {
-                ctgButtons[i].className = 'btn btn-secondary btn1';
-            }
-            else {
-                ctgButtons[i].className = 'btn btn-outline-secondary btn1';
-            }
+
+        for (let ctgButton of ctgButtons) {
+            ctgButton.className = 'btn btn1';
+            ctgButton.classList.add(source.checked ? 'btn-secondary' : ' btn-outline-secondary')
         }
+        // for (i = 0; i < ctgButtons.length; i++) {
+        //     if (source.checked) {
+        //         ctgButtons[i].className = 'btn btn-secondary btn1';
+        //     }
+        //     else {
+        //         ctgButtons[i].className = 'btn btn-outline-secondary btn1';
+        //     }
+        // }
     }
     else {
         if (source.name == 'allSystems') {
@@ -43,9 +48,11 @@ function chooseAll(source) {
 
 function show(source) {
     if (!checkboxClick) {
-        img = source.querySelectorAll('img')[0];
+        // img = source.querySelectorAll('img')[0];
+        img = source.querySelector('img');
         nm = 'system' + source.getAttribute('name');
-        systems = document.querySelectorAll("[data-name=" + nm + "]");
+        // systems = document.querySelectorAll("[data-name=" + nm + "]");
+        systems = document.querySelectorAll(`[data-name=${nm}]`);
         systemsBlock = systems[0].parentElement;
         if (systemsBlock.style.display == 'none' || systemsBlock.style.display == '') {
             systemsBlock.style.display = 'block';
@@ -61,17 +68,34 @@ function show(source) {
 }
 
 function changeBtn(source) {
-    var className = source.getAttribute('class');
-    if (className == 'btn btn-outline-secondary btn1'){
-        source.setAttribute('class', 'btn btn-secondary btn1')
+    // var oldClassName = source.className;
+    // var newClassName = '';
+
+    if (source.classList.contains('btn-outline-secondary')) {
+        source.classList.remove('btn-outline-secondary');
+        source.classList.add('btn-secondary');
+    } 
+    else if (source.classList.contains('btn-secondary')) {
+        source.classList.remove('btn-secondary');
+        source.classList.add('btn-outline-secondary');
     }
-    if (className == 'btn btn-secondary btn1') {
-        source.setAttribute('class', 'btn btn-outline-secondary btn1')
-    }
-    if (className == 'btn btn-outline-secondary btn2') {
-        source.setAttribute('class', 'btn btn-secondary btn2')
-    }
-    if (className == 'btn btn-secondary btn2') {
-        source.setAttribute('class', 'btn btn-outline-secondary btn2')
-    }
+
+    // if (oldClassName === 'btn btn-outline-secondary btn1'){
+    //     newClassName = 'btn btn-secondary btn1';
+    //     // source.setAttribute('class', 'btn btn-secondary btn1')
+    // }
+    // if (oldClassName === 'btn btn-secondary btn1') {
+    //     newClassName = 'btn btn-outline-secondary btn1';
+    //     // source.setAttribute('class', 'btn btn-outline-secondary btn1')
+    // }
+    // if (oldClassName === 'btn btn-outline-secondary btn2') {
+    //     newClassName = 'btn btn-secondary btn2';
+    //     // source.setAttribute('class', 'btn btn-secondary btn2')
+    // }
+    // if (oldClassName === 'btn btn-secondary btn2') {
+    //     newClassName = 'btn btn-outline-secondary btn2';
+    //     // source.setAttribute('class', 'btn btn-outline-secondary btn2')
+    // }
+
+    // source.className = newClassName;
 }
