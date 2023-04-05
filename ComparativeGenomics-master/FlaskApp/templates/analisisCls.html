@@ -15,9 +15,9 @@
             <div class="container">
                 <div class="py-2 d-flex justify-content-end">
                     {% if loop.index == 1 and displayCount == 1 %}
-                    <form id="reset" class="ps-4" method="post">
-                        <input id="resetBtn" class="btn btn-outline-secondary" type="button" onclick="$(this).reset()" value="Reset" />
-                    </form>
+                    <!-- <form id="reset" class="ps-4" method="post"> -->
+                        <input id="resetBtn" class="btn btn-outline-secondary" type="button" onclick="reset()" value="Reset" />
+                    <!-- </form> -->
                     <form class="ps-4" action="/download/kwClassification/kwClassification" method="get" target="_blank">
                         <input class="btn btn-outline-secondary" type="submit" value="Download keywords classification" />
                     </form>

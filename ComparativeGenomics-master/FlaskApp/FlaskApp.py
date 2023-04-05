@@ -57,6 +57,7 @@ def analyse():
 def documentation():
     return render_template("documentation.html")
 
+# можно убрать
 @app.route('/reset', methods=['post'])
 def reset():
     data.reset()
