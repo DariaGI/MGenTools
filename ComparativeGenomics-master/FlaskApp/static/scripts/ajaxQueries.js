@@ -1,7 +1,9 @@
+const loaderImg = '<img width="50px" src="static/images/processing.gif">'
+
 function loadScript(url, callback) {
     const script = document.createElement('script');
     script.src = url;
-    script.defer = true;
+    script.async = true;
     script.onload = callback;
     document.body.appendChild(script);
 }
@@ -15,7 +17,7 @@ document.getElementById('clsFormBtn').addEventListener('click', async () => {
     const formData = new FormData(formElem);
 
     const resultsElem = document.getElementById('classificationResult');
-    resultsElem.innerHTML = '<img width="50px" src="static/images/processing.gif">';
+    resultsElem.innerHTML = loaderImg;
 
     const response = await request({
         method: 'POST',
@@ -51,30 +53,33 @@ function reset() {
 //     });
 // });
 
-// $.fn.reset = function () {
-//     console.log("reseting");
-//     var form_data = new FormData($('#resetForm')[0]);
-//     $.ajax({
-//         type: 'POST',
-//         url: '/reset',
-//         data: form_data,
-//         contentType: false,
-//         cache: false,
-//         processData: false,
-//         success: function (data) {
-//             $('#classificationResult').html(data);
-//         },
-//     });
-// };
-
 $(function () {
     $('#countFormBtn').click(function () {
         var form_data = new FormData($('#countForm')[0]);
-        $('#countSlide').html('<img width="50px" src="static/images/processing.gif">');
+
+        let selectedCategories = [];
+        let selectedSystems = document.querySelectorAll('td.hidden');
+        
+        document.querySelectorAll('.btn1.btn-secondary').forEach(selectedCategory => {
+            let tableRow = selectedCategory.closest('tr')
+            selectedCategories.push(tableRow.querySelector('td.category').innerText);
+        })
+
+        let result = {};
+
+        for (let i in selectedCategories) {
+            result[selectedCategories[i]] = [];
+            selectedSystems[i].querySelectorAll('input[type=checkbox]').forEach(checkbox => {
+                if (checkbox.checked) result[selectedCategories[i]].push(checkbox.value);
+            });
+        }
+        console.log(result);
+
+        $('#countSlide').html(loaderImg);
         $.ajax({
             type: 'POST',
             url: '/count',
-            data: form_data,
+            data: JSON.stringify(result),
             contentType: false,
             cache: false,
             processData: false,
