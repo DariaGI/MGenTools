@@ -1,3 +1,4 @@
+from sklearn.mixture import BayesianGaussianMixture
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans, AgglomerativeClustering, AffinityPropagation
 from sklearn.decomposition import PCA
@@ -40,31 +41,78 @@ def buildScatter(data, components, strains, predictions):
     return pltJSON
 
 
-def clusterization(genes_count, features, clusterMethods, n_clusters, linkage, distance, tree, otu_ids):
+def clusterization(genes_count, features, clusterMethods, n_clusters=2, linkage='ward', distance='euclidean',
+                   random_state=None, tree=None, otu_ids=None):
     predictions = []
 
-    if distance == "eucledian":
-        x = genes_count[:, features].to_numpy()
+    if distance == "euclidean":
+
+        x = np.swapaxes(np.array(genes_count[features]), 0, 1)
         x = StandardScaler().fit_transform(x)
+
+        if '0' in clusterMethods:
+
+            model = KMeans(n_clusters=int(n_clusters), n_init='auto')
+            model.fit(x)
+            predictions = model.predict(x)
+
+        elif '1' in clusterMethods:
+
+            model = AgglomerativeClustering(n_clusters=int(n_clusters), metric='euclidean', linkage=linkage)
+            model.fit_predict(x)
+            predictions = model.labels_
+
+        elif '2' in clusterMethods:
+
+            model = AffinityPropagation(affinity='euclidean', random_state=random_state)
+            model.fit(x)
+            predictions = model.labels_
+
+        elif '3' in clusterMethods:
+
+            model = BayesianGaussianMixture(n_components=int(n_clusters), random_state=random_state)
+            model.fit(x)
+            predictions = model.predict(x)
+
+        return x, predictions
 
     else:
-        x = precomputed_matrix(genes_count, distance, tree, otu_ids)[0].to_numpy()
-        x = StandardScaler().fit_transform(x)
+        if "0" in clusterMethods or "3" in clusterMethods:
 
-    if '0' in clusterMethods:
-        model = KMeans(n_clusters=int(n_clusters), n_init='auto')
-        model.fit(x)
-        predictions = model.predict(x)
-    if '1' in clusterMethods:
-        model = AgglomerativeClustering(n_clusters=int(n_clusters), metric='euclidean', linkage=linkage)
-        model.fit_predict(x)
-        predictions = model.labels_
-    if '2' in clusterMethods:
-        model = AffinityPropagation()
-        model.fit(x)
-        predictions = model.labels_
+            x = np.swapaxes(np.array(genes_count[features]), 0, 1)
+            x = StandardScaler().fit_transform(x)
 
-    return x, predictions
+            if '0' in clusterMethods:
+
+                model = KMeans(n_clusters=int(n_clusters), n_init='auto')
+                model.fit(x)
+                predictions = model.predict(x)
+
+            elif '3' in clusterMethods:
+
+                model = BayesianGaussianMixture(n_components=int(n_clusters), random_state=random_state)
+                model.fit(x)
+                predictions = model.predict(x)
+
+        elif "1" in clusterMethods or "2" in clusterMethods:
+
+            x = np.array([*precomputed_matrix(genes_count, distance, tree, otu_ids)[0]])
+            x = StandardScaler().fit_transform(x)
+
+            if '1' in clusterMethods and linkage != "ward":
+
+                model = AgglomerativeClustering(n_clusters=int(n_clusters), metric="precomputed", linkage=linkage)
+                model.fit_predict(x)
+                predictions = model.labels_
+
+            elif '2' in clusterMethods:
+
+                model = AffinityPropagation(affinity='precomputed', random_state=random_state)
+                model.fit(x)
+                predictions = model.labels_
+
+
+        return x, predictions
 
 
 def buildPlots(data, methods, perplexity, metric, clusterMethods, n_clusters, linkage, distance, tree, otu_ids):
@@ -82,7 +130,7 @@ def buildPlots(data, methods, perplexity, metric, clusterMethods, n_clusters, li
 
             if distance == "eucledian":
                 x, predictions = clusterization(genes_count, features, clusterMethods,
-                                                n_clusters, linkage, distance, tree, otu_ids)
+                                                n_clusters, linkage, distance)
                 if '0' in methods:
                     # only eucledian distance
                     methodData = PCA(n_components=2, random_state=0)
@@ -110,9 +158,9 @@ def buildPlots(data, methods, perplexity, metric, clusterMethods, n_clusters, li
                     components = pd.DataFrame(data=methodData.fit_transform(x), columns=['Component 1', 'Component 2'])
                     plots['PCA'] = buildScatter(data, components, strains, predictions)
 
-                else:
+                elif "1" or "2" in methods:
                     x, predictions = clusterization(genes_count, features, clusterMethods,
-                                                    n_clusters, linkage, distance)
+                                                    n_clusters, linkage, distance, tree, otu_ids)
                     if '1' in methods:
                         methodData = MDS(random_state=0, metric=metric, dissimilarity=type_of_matrix)
                         components = pd.DataFrame(data=methodData.fit_transform(x),
@@ -154,26 +202,22 @@ def statistic_test(data, distance, tree, otu_ids, statMethods, perplexity, clust
     return test_result
 
 
-def precomputed_matrix(genes_count, distance, tree, otu_ids):
+def precomputed_matrix(genes_count, distance='euclidean', tree=None, otu_ids=None):
     bc_dm = []
+
     if genes_count.is_empty():
         return bc_dm
 
     strains = genes_count["Strain"]
     features = genes_count.columns[1:]
-    genes_count_cut = np.array(genes_count[:, features])
+    genes_count_cut = np.swapaxes(np.array(genes_count[features]), 0, 1)
 
     if len(strains) > 1:
         if len(features) > 1:
-            bc_dm = beta_diversity(distance, genes_count_cut, strains, tree=tree, otu_ids=otu_ids)
-            # if distance == "euclidean":
-            #     bc_dm = beta_diversity(distance, genes_count_cut, strains)
-            # if distance == "braycurtis":
-            #     bc_dm = beta_diversity(distance, genes_count_cut, strains)
-            # if distance == "weighted_unifrac":
-            #     bc_dm = beta_diversity(distance, genes_count_cut, strains, tree=tree, otu_ids=otu_ids)
-            # if distance == "unweighted_unifrac":
-            #     bc_dm = beta_diversity(distance, genes_count_cut, strains, tree=tree, otu_ids=otu_ids)
-            # if distance == "jaccard":
-            #     bc_dm = beta_diversity(distance, genes_count_cut, strains)
-    return bc_dm, strains, features
+
+            if distance in ["euclidean", "braycurtis", "jaccard"]:
+                bc_dm = beta_diversity(distance, genes_count_cut, strains)
+            elif distance in ["weighted_unifrac", "unweighted_unifrac"]:
+                bc_dm = beta_diversity(distance, genes_count_cut, strains, tree=tree, otu_ids=otu_ids)
+
+            return bc_dm, strains, features
