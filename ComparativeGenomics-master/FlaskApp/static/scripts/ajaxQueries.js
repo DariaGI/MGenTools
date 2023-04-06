@@ -73,14 +73,14 @@ $(function () {
                 if (checkbox.checked) result[selectedCategories[i]].push(checkbox.value);
             });
         }
-        console.log(result);
+        // console.log(result);
 
         $('#countSlide').html(loaderImg);
         $.ajax({
             type: 'POST',
             url: '/count',
             data: JSON.stringify(result),
-            contentType: false,
+            contentType: 'application/json',
             cache: false,
             processData: false,
             success: function (data) {

@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, send_file, make_response, Response
+from flask import Flask, request, render_template, send_file, make_response, Response, jsonify
 import pandas as pd
 import polars as pl
 from hadlers.Data import Data
@@ -90,10 +90,14 @@ def fullClassified():
 
 @app.route('/count', methods=['post'])
 def count():
-    categories = request.form.getlist('categories')
-    systems = request.form.getlist('systems')
-    data.setCount(countFunctions(data, categories, systems))    
-    return render_template("analisisCount.html", countTable=data.getCount())
+    request_json_data = request.get_json()
+    print(request_json_data)
+
+    return jsonify({'message': 'Hello World!'})
+    # categories = request.form.getlist('categories')
+    # systems = request.form.getlist('systems')
+    # data.setCount(countFunctions(data, categories, systems))    
+    # return render_template("analisisCount.html", countTable=data.getCount())
 
 @app.route('/visualize', methods=['post'])
 def visualize():
