@@ -16,6 +16,7 @@ class Data():
         self.userCls = pl.DataFrame()
         self.plots = {}
         self.breakdown = pl.DataFrame()
+        self.distance_matrix = {}
 
     def reset(self):
         self.kwCls = pl.DataFrame(data=[], schema=[
@@ -29,6 +30,7 @@ class Data():
         self.userCls = pl.DataFrame()
         self.plots = {}
         self.breakdown = pl.DataFrame()
+        self.distance_matrix = {}
 
     def setRastCls(self, file):
         self.rastCls = file
@@ -77,3 +79,9 @@ class Data():
 
     def getBreakdown(self):
         return self.breakdown
+
+    def setCumputeMatrix(self, files):
+        self.distance_matrix = files
+
+    def getCumputeMatrix(self):
+        return self.distance_matrix
