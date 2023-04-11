@@ -4,10 +4,10 @@ import pyarrow
 import numpy as np
 
 
-def countFunctions(data, categories, systems):
+def countFunctions(data, categories_systems):
     files = data.getClassified()
-    categories_names = ["C_" + i for i in categories]
-    systems_names = ["S_" + key + "_" + sys for key in systems for sys in systems[key]]
+    categories_names = ["C_" + key for key in categories_systems if categories_systems[key]['selected']]
+    systems_names = ["S_" + key + "_" + sys for key in categories_systems for sys in categories_systems[key]["systems"]]
     strains = [filename for filename in files]
     count = pd.DataFrame(0, index=np.arange(len(strains)), columns=["Strain"] + categories_names + systems_names)
     count["Strain"] = strains
