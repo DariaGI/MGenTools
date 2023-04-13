@@ -37,10 +37,8 @@
                             {% if not hierarchy.empty: %}
                             {% for category, list in hierarchy.items():%}
                             {% set loopIndex = loop.index %}
-                            <tr name="{{loopIndex}}" onClick="show(this)">
-                                <td class="category">
-                                    {{category}}
-                                </td>
+                            <tr class="category" name="{{loopIndex}}" onClick="show(this)">
+                                <td class="category__name"> {{category}} </td>
                                 <td>
                                     <input name="categories" value="{{category}}" onClick="checkboxClick=true" id="ctg{{loopIndex}}Checkbox" style="display:none" type="checkbox" />
                                     <label name="ctgLabel" onClick="checkboxClick = true; changeBtn(this)" class="btn btn-outline-secondary btn1" for="ctg{{loopIndex}}Checkbox">Выбрать</label>
@@ -49,7 +47,7 @@
                                     <img width="20" align="right" style="margin-top: 12px" src="{{url_for('static',filename='images/arrow_down.png') }}">
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="systems">
                                 <td class="hidden">
                                     {% for system in list:%}
                                     <input type="checkbox" data-name="system{{loopIndex}}" name="systems" value="{{system}}" />{{system}}<br />

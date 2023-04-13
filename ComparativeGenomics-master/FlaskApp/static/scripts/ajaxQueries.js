@@ -34,52 +34,37 @@ function reset() {
     document.getElementById('classificationResult').innerHTML = '';
 }
 
-// $(function () {
-//     $('#clsFormBtn').click(function () {
-//         var form_data = new FormData($('#clsForm')[0]);
-//         console.log(form_data);
-//         $('#classificationResult').html('<img width="50px" src="static/images/processing.gif">');
-//         $.ajax({
-//             type: 'POST',
-//             url: '/classify',
-//             data: form_data,
-//             contentType: false,
-//             cache: false,
-//             processData: false,
-//             success: function (data) {
-//                 $('#classificationResult').html(data);
-//             },
-//         });
-//     });
-// });
 
 $(function () {
     $('#countFormBtn').click(function () {
-        var form_data = new FormData($('#countForm')[0]);
+        const categoryElems = document.querySelectorAll('tr.category');
+        const systemElems = document.querySelectorAll('tr.systems');
 
-        let selectedCategories = [];
-        let selectedSystems = document.querySelectorAll('td.hidden');
-        
-        document.querySelectorAll('.btn1.btn-secondary').forEach(selectedCategory => {
-            let tableRow = selectedCategory.closest('tr')
-            selectedCategories.push(tableRow.querySelector('td.category').innerText);
-        })
+        let categories = {};
 
-        let result = {};
+        for (let i = 0; i < categoryElems.length; i++) {
+            const category = categoryElems[i];
 
-        for (let i in selectedCategories) {
-            result[selectedCategories[i]] = [];
-            selectedSystems[i].querySelectorAll('input[type=checkbox]').forEach(checkbox => {
-                if (checkbox.checked) result[selectedCategories[i]].push(checkbox.value);
-            });
+            const categoryName = category.querySelector('td.category__name').innerText;
+            const isSelected = category.querySelector('.btn-secondary') !== null;
+
+            const categorySistemElems = systemElems[i].querySelectorAll('input[type=checkbox]:checked');
+            let categorySistems = [];
+            for (const system of categorySistemElems) {
+                categorySistems.push(system.value);
+            }
+
+            categories[categoryName] = {
+                selected: isSelected,
+                systems: categorySistems
+            };
         }
-        // console.log(result);
 
         $('#countSlide').html(loaderImg);
         $.ajax({
             type: 'POST',
             url: '/count',
-            data: JSON.stringify(result),
+            data: JSON.stringify(categories),
             contentType: 'application/json',
             cache: false,
             processData: false,
