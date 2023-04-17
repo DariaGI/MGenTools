@@ -121,6 +121,7 @@ def download(type, filename):
         df = data.getCount().write_csv(separator=";")
     return Response(df,status=200,headers={"Content-disposition":"attachment; filename="+filename+".csv"},mimetype="application/csv")
 
+
 @app.route('/uploadBreakdown', methods=['post'])
 def uploadBreakdown():
     breakdown = request.files.get("breakdown")
