@@ -8,6 +8,7 @@ from hadlers.clsDisplay import displayClassification
 from hadlers.counter import countFunctions
 from hadlers.visualize import buildPlots
 from hadlers.validator import validate
+from hadlers.memoryzip_plots import get_zip_buffer
 from sys import getsizeof
 import os
 
@@ -119,7 +120,15 @@ def download(type, filename):
         df = data.getKwCls().write_csv(separator=";")
     if type == "counted":
         df = data.getCount().write_csv(separator=";")
-    return Response(df,status=200,headers={"Content-disposition":"attachment; filename="+filename+".csv"},mimetype="application/csv")
+    return Response(df,status=200,headers={"Content-disposition":"attachment; filename="+filename+".csv"}, mimetype="application/csv")
+
+
+
+@app.route('/download/plots', methods=['get'])
+def download_plots():
+    export_format = "тут надо их откуда-то принять наверное)"
+    buff = get_zip_buffer(data, export_format)
+    return send_file(buff, mimetype='application/zip', as_attachment=True, attachment_filename="zip_plots.zip")
 
 
 @app.route('/uploadBreakdown', methods=['post'])
