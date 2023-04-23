@@ -1,0 +1,12 @@
+h5 {
+    margin-top: 20px;
+}
+
+select {
+    margin: 10px auto;
+    border: 1px solid lightgray;
+    border-radius: 3px;
+    outline: none;
+    padding: 5px 10px; 
+    background-color: transparent;
+}

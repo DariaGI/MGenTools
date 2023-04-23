@@ -1,0 +1,48 @@
+<form id="countForm" method="post" enctype="multipart/form-data">
+    <h4>Иерархия категорий и систем</h4>
+    <input onClick="chooseAll(this)" name="allCategories" class="btn-check" id="ctgsCheckbox" type="checkbox">
+    <label class="btn btn-outline-secondary btn-sm" for="ctgsCheckbox">Все категории</label>
+    <input onClick="chooseAll(this)" name="allSystems" class="btn-check" id="stmsCheckbox" type="checkbox">
+    <label class="btn btn-outline-secondary btn-sm" for="stmsCheckbox">Все системы</label>
+    <div class="scroll-table scroll-table-body">
+        <table>
+            <tr>
+                <td></td>
+            </tr>
+            {% if not hierarchy.empty: %}
+            {% for category, list in hierarchy.items():%}
+            {% set loopIndex = loop.index %}
+            <tr class="category" name="{{loopIndex}}" onClick="show(this)">
+                <td class="category__name"> {{category}} </td>
+                <td>
+                    <input name="categories" value="{{category}}" onClick="checkboxClick=true"
+                        id="ctg{{loopIndex}}Checkbox" style="display:none" type="checkbox" />
+                    <label name="ctgLabel" onClick="checkboxClick = true; changeBtn(this)"
+                        class="btn btn-outline-secondary btn1" for="ctg{{loopIndex}}Checkbox">Выбрать</label>
+                    <input name="{{loopIndex}}" onClick="chooseAll(this)" id="stms{{loopIndex}}Checkbox"
+                        style="display:none" type="checkbox" />
+                    <label name="stmsLabel" onClick="checkboxClick = true;changeBtn(this)"
+                        class="btn btn-outline-secondary btn2" for="stms{{loopIndex}}Checkbox">Все системы внутри
+                        категории</label>
+                    <img width="20" align="right" style="margin-top: 12px"
+                        src="{{url_for('static',filename='images/arrow_down.png') }}">
+                </td>
+            </tr>
+            <tr class="systems">
+                <td class="hidden">
+                    {% for system in list:%}
+                    <input type="checkbox" data-name="system{{loopIndex}}" name="systems"
+                        value="{{system}}" />{{system}}<br />
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+    <p class="pt-4"><input id="countFormBtn" class="btn btn-outline-secondary" type="button"
+            value="Запустить расчеты" /></p>
+</form>
+<hr class="mb-5">
+<h4>Результаты расчетов</h4>
+<div id="countSlide">{% include 'analisisCount.html' %} </div>

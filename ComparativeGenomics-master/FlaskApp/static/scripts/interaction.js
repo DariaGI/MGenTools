@@ -10,14 +10,6 @@ function chooseAll(source) {
             ctgButton.className = 'btn btn1';
             ctgButton.classList.add(source.checked ? 'btn-secondary' : ' btn-outline-secondary')
         }
-        // for (i = 0; i < ctgButtons.length; i++) {
-        //     if (source.checked) {
-        //         ctgButtons[i].className = 'btn btn-secondary btn1';
-        //     }
-        //     else {
-        //         ctgButtons[i].className = 'btn btn-outline-secondary btn1';
-        //     }
-        // }
     }
     else {
         if (source.name == 'allSystems') {
@@ -68,9 +60,6 @@ function show(source) {
 }
 
 function changeBtn(source) {
-    // var oldClassName = source.className;
-    // var newClassName = '';
-
     if (source.classList.contains('btn-outline-secondary')) {
         source.classList.remove('btn-outline-secondary');
         source.classList.add('btn-secondary');
@@ -79,23 +68,28 @@ function changeBtn(source) {
         source.classList.remove('btn-secondary');
         source.classList.add('btn-outline-secondary');
     }
-
-    // if (oldClassName === 'btn btn-outline-secondary btn1'){
-    //     newClassName = 'btn btn-secondary btn1';
-    //     // source.setAttribute('class', 'btn btn-secondary btn1')
-    // }
-    // if (oldClassName === 'btn btn-secondary btn1') {
-    //     newClassName = 'btn btn-outline-secondary btn1';
-    //     // source.setAttribute('class', 'btn btn-outline-secondary btn1')
-    // }
-    // if (oldClassName === 'btn btn-outline-secondary btn2') {
-    //     newClassName = 'btn btn-secondary btn2';
-    //     // source.setAttribute('class', 'btn btn-secondary btn2')
-    // }
-    // if (oldClassName === 'btn btn-secondary btn2') {
-    //     newClassName = 'btn btn-outline-secondary btn2';
-    //     // source.setAttribute('class', 'btn btn-outline-secondary btn2')
-    // }
-
-    // source.className = newClassName;
 }
+
+function showElement(selector) {
+    document.querySelector(selector).classList.toggle('d-none');
+}
+
+const unifracSelect = document.querySelector('select[name="unifrac"]');
+
+unifracSelect.addEventListener('change', () => {
+    const selected = unifracSelect.options[unifracSelect.selectedIndex];
+    document.querySelector('.unifrac-data').style.display = selected.value === 'none' ? 'none' : 'block';
+})
+
+const clusterMethodSelect = document.getElementById('clusterMethod');
+
+clusterMethodSelect.addEventListener('change', () => {
+    const selected = clusterMethodSelect.options[clusterMethodSelect.selectedIndex];
+    const target = selected.getAttribute('data-target');
+    if (selected.value === 'none') {
+        document.querySelectorAll('.togglable').forEach(elem => elem.classList.add('d-none'));
+    }
+    if (target === null) return;
+    document.querySelectorAll('.togglable').forEach(elem => elem.classList.add('d-none'));
+    document.querySelector(target).classList.toggle('d-none');
+});

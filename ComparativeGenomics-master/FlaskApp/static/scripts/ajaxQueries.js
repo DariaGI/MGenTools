@@ -12,12 +12,17 @@ loadScript('/static/scripts/requests.js', () => {
     console.log('Модуль запросов подключен');
 })
 
+function loader(elem) {
+    elem.innerHTML = loaderImg;
+}
+
 document.getElementById('clsFormBtn').addEventListener('click', async () => {
     const formElem = document.getElementById('clsForm');
     const formData = new FormData(formElem);
 
     const resultsElem = document.getElementById('classificationResult');
-    resultsElem.innerHTML = loaderImg;
+
+    loader(resultsElem);
 
     const response = await request({
         method: 'POST',
@@ -75,20 +80,20 @@ $(function () {
     });
 });
 $(function () {
-    $('#vslFormBtn').click(function () {
-        var form_data = new FormData($('#vslForm')[0]);
-        $('#vslSlide').html('<img width="50px" src="static/images/processing.gif">');
-        $.ajax({
-            type: 'POST',
+    $('#vslFormBtn').click(async () => {
+        const vslForm = document.getElementById('vslForm');
+        const formData = new FormData(vslForm);
+        
+        console.log(formData);
+        $('#vslSlide').html(loaderImg);
+
+        const response = await request({
+            method: 'POST',
             url: '/visualize',
-            data: form_data,
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function (data) {
-                $('#vslSlide').html(data);
-            },
+            data: formData
         });
+
+        $('#vslSlide').html(response);
     });
 });
 $(function () {

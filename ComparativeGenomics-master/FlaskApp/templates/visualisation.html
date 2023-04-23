@@ -1,0 +1,100 @@
+<h4>Маркировка данных</h4>
+<form id="uploadBreakdown" method="post" enctype="multipart/form-data">
+    <p><input type="file" class="form-control" name="breakdown" /></p>
+    <p><input id="uploadBreakdownBtn" class="btn btn-outline-secondary" type="button"
+            value="Загрузить разбивку данных" /></p>
+</form>
+<span id="breakdownDisplay"></span>
+<hr class="mb-5">
+
+<form id="vslForm" method="post" enctype="multipart/form-data">
+    <h4>Меры различий</h4>
+
+    <select name="convergenceType" id="">
+        <option value="" selected>Евклидово расстояние</option>
+        <option value="">Несходство Брея-Кертиса</option>
+        <option value="">Расстояние Жаккара</option>
+    </select>
+
+    <h5>UniFrac</h5>
+    <select name="unifrac">
+        <option value="none" selected>-</option>
+        <option value="weighted">Взвешенный</option>
+        <option value="unweighted">Невзвешенный</option>
+    </select>
+    <div class="unifrac-data" style="display: none">
+        <p>Загрузить дерево: <input type="file" name="unifrac-data__tree"></p>
+        <p>Загрузить идентификаторы OTU: <input type="file" name="unifrac-data__otu"></p>
+    </div>
+
+    <h4>Кластеризация</h4>
+    <div class="d-block">
+        <label for="n_clusters">Количество кластеров: </label>
+        <input type="number" id="n_clusters" name="n_clusters" value="3">
+    </div>
+    <select name="clusterMethod" id="clusterMethod">
+        <option value="none" selected>-</option>
+        <option value="k_avg">К-средних</option>
+        <option value="hierarchical_clustering" data-target="#linkage">Иерархическая кластеризация</option>
+        <option value="affinity_clustering" data-target="#affinity_clustering__random_state">Аффинная кластеризация</option>
+        <option value="bayesian_gaussian_mixture" data-target="#bayesian_gaussian__random_state">Байесовская гауссовская смесь</option>
+    </select>
+    <div id="linkage" class="d-none togglable">
+        <label for="linkage">Критерий связывания</label>
+        <select id="linkage" name="linkage">
+            <option value="ward" selected>ward</option>
+            <option value="average">average</option>
+            <option value="single">single</option>
+            <option value="complete">complete</option>
+        </select>
+    </div>
+    <div id="affinity_clustering__random_state" class="d-none togglable">
+        <label for="affinity_clustering__input">random_state</label>
+        <input type="text" id="affinity_clustering__input" name="affinity_clustering__input">
+    </div>
+    <div id="bayesian_gaussian__random_state" class="d-none togglable">
+        <label for="bayesian_gaussian__input">random_state</label>
+        <input type="text" id="bayesian_gaussian__input" name="bayesian_gaussian__input">
+    </div>
+    <hr class="mb-5">
+
+    <h4>Параметры визуализации</h4>
+    <div class="d-block pt-2">
+        <div class="d-block">
+            <input type="checkbox" name="method" id="pca" value="pca">
+            <label for="pca">PCA</label>
+        </div>
+
+        <div class="d-block">
+            <input type="checkbox" name="method" id="mds" value="mds">
+            <label for="mds">MDS</label>
+        </div>
+
+        <div class="d-block">
+            <input type="checkbox" name="method" id="t_sne" value="t_sne" onclick="showElement('#perplexity')">
+            <label for="t_sne" >t-SNE</label>
+        </div>
+
+        <div class="d-none" id="perplexity">
+            <label for="perplexityInput">perplexity</label>
+            <input id="perplexityInput" type="number" name="perplexity" value="10" placeholder="perplexity">
+        </div>
+    </div>
+    <div id="vslFormBtn" class="btn btn-success my-3">Построить график</div>
+</form>
+<hr class="mb-5">
+<h4>Результаты визуализации</h4>
+<button class="btn btn-outline-secondary">Экспорт графиков</button>
+<span id="vslSlide">
+    {% include 'analisisVsl.html' %}
+</span>
+
+<h4>Оценка статистической достоверности различий</h4>
+<p>
+    <input type="checkbox" name="" id="permanova"> 
+    <label for="permanova">PERMANOVA</label>
+</p>
+<p>
+    <input type="checkbox" name="" id="anosism">
+    <label for="anosism">ANOSISM</label> 
+</p>
