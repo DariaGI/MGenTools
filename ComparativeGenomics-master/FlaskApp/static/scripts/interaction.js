@@ -74,11 +74,16 @@ function showElement(selector) {
     document.querySelector(selector).classList.toggle('d-none');
 }
 
-const unifracSelect = document.querySelector('select[name="unifrac"]');
+const unifracSelect = document.getElementById('convergenceType');
 
 unifracSelect.addEventListener('change', () => {
     const selected = unifracSelect.options[unifracSelect.selectedIndex];
-    document.querySelector('.unifrac-data').style.display = selected.value === 'none' ? 'none' : 'block';
+    const unifracDataElem = document.querySelector('.unifrac-data');
+    if (['weighted_unifrac', 'unweighted_unifrac'].includes(selected.value)) {
+        unifracDataElem.classList.remove('d-none');
+    } else {
+        unifracDataElem.classList.add('d-none');
+    }
 })
 
 const clusterMethodSelect = document.getElementById('clusterMethod');
@@ -86,10 +91,14 @@ const clusterMethodSelect = document.getElementById('clusterMethod');
 clusterMethodSelect.addEventListener('change', () => {
     const selected = clusterMethodSelect.options[clusterMethodSelect.selectedIndex];
     const target = selected.getAttribute('data-target');
-    if (selected.value === 'none') {
+    if (selected.value === 'none' || selected.value === 'k_avg') {
         document.querySelectorAll('.togglable').forEach(elem => elem.classList.add('d-none'));
     }
     if (target === null) return;
     document.querySelectorAll('.togglable').forEach(elem => elem.classList.add('d-none'));
     document.querySelector(target).classList.toggle('d-none');
+});
+
+document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.checked = false;
 });

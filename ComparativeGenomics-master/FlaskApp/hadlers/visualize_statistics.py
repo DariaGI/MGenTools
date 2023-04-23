@@ -28,14 +28,14 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
             distance_matrix['euclidean'] = x
 
     else:
-        if ("0" in clusterMethods or "3" in clusterMethods) and 'euclidean' not in distance_matrix and distance_metric not in distance_matrix:
+        if ("k_avg" in clusterMethods or "bayesian_gaussian_mixture" in clusterMethods) and 'euclidean' not in distance_matrix and distance_metric not in distance_matrix:
             print("cannot precomputed")
             eucl_matrix = precomputed_matrix(genes_count, distance_metric='euclidean')
             distance_matrix['euclidean'] = eucl_matrix
             dist_matrix = precomputed_matrix(genes_count, distance_metric=distance_metric)
             distance_matrix[distance_metric] = dist_matrix
 
-        elif ("1" in clusterMethods or "2" in clusterMethods) and distance_metric not in distance_matrix:
+        elif ("hierarchical_clustering" in clusterMethods or "affinity_clustering" in clusterMethods) and distance_metric not in distance_matrix:
             print("precomputed")
             x = precomputed_matrix(genes_count, distance_metric=distance_metric, tree=tree, otu_ids=otu_ids)
             distance_matrix[distance_metric] = x
@@ -46,28 +46,28 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
             dist_matrix = precomputed_matrix(genes_count, distance_metric=distance_metric)
             distance_matrix[distance_metric] = dist_matrix
 
-    if '0' in clusterMethods:
+    if 'k_avg' in clusterMethods:
         print("KMeans")
         model = KMeans(n_clusters=int(n_clusters), n_init='auto')
         calc_matrix = np.array([*distance_matrix["euclidean"]])
         model.fit(calc_matrix)
         predictions = model.predict(calc_matrix)
 
-    elif '3' in clusterMethods:
+    elif 'bayesian_gaussian_mixture' in clusterMethods:
         print("BayesianGaussianMixture")
         model = BayesianGaussianMixture(n_components=int(n_clusters), random_state=random_state)
         calc_matrix = np.array([*distance_matrix["euclidean"]])
         model.fit(calc_matrix)
         predictions = model.predict(calc_matrix)
 
-    elif '1' in clusterMethods and linkage != "ward":
+    elif 'hierarchical_clustering' in clusterMethods and linkage != "ward":
         print("AgglomerativeClustering")
         model = AgglomerativeClustering(n_clusters=int(n_clusters), metric="precomputed", linkage=linkage)
         calc_matrix = np.array([*distance_matrix[distance_metric]])
         model.fit_predict(calc_matrix)
         predictions = model.labels_
 
-    elif '2' in clusterMethods:
+    elif 'affinity_clustering' in clusterMethods:
         print("AffinityPropagation")
         model = AffinityPropagation(affinity='precomputed', random_state=random_state)
         calc_matrix = np.array([*distance_matrix[distance_metric]])

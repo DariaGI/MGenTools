@@ -10,21 +10,17 @@
 <form id="vslForm" method="post" enctype="multipart/form-data">
     <h4>Меры различий</h4>
 
-    <select name="convergenceType" id="">
-        <option value="" selected>Евклидово расстояние</option>
-        <option value="">Несходство Брея-Кертиса</option>
-        <option value="">Расстояние Жаккара</option>
+    <select name="convergenceType" id="convergenceType">
+        <option value="euclidean_distance" selected>Евклидово расстояние</option>
+        <option value="bray_curtis_mismatch">Несходство Брея-Кертиса</option>
+        <option value="jacquard_distance">Расстояние Жаккара</option>
+        <option value="weighted_unifrac">Взвешенный UniFrac</option>
+        <option value="unweighted_unifrac">Невзвешенный UniFrac</option>
     </select>
 
-    <h5>UniFrac</h5>
-    <select name="unifrac">
-        <option value="none" selected>-</option>
-        <option value="weighted">Взвешенный</option>
-        <option value="unweighted">Невзвешенный</option>
-    </select>
-    <div class="unifrac-data" style="display: none">
-        <p>Загрузить дерево: <input type="file" name="unifrac-data__tree"></p>
-        <p>Загрузить идентификаторы OTU: <input type="file" name="unifrac-data__otu"></p>
+    <div class="d-none unifrac-data">
+        <p>Загрузить дерево: <input type="file" name="unifrac_data__tree"></p>
+        <p>Загрузить идентификаторы OTU: <input type="file" name="unifrac_data__otu"></p>
     </div>
 
     <h4>Кластеризация</h4>
@@ -84,7 +80,7 @@
 </form>
 <hr class="mb-5">
 <h4>Результаты визуализации</h4>
-<button class="btn btn-outline-secondary">Экспорт графиков</button>
+<a href="/download/plots" class="btn btn-outline-secondary">Экспорт графиков</a>
 <span id="vslSlide">
     {% include 'analisisVsl.html' %}
 </span>
