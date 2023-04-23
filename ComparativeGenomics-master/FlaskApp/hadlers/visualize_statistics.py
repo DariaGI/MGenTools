@@ -29,14 +29,14 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
 
     else:
         if ("k_avg" in clusterMethods or "bayesian_gaussian_mixture" in clusterMethods) and 'euclidean' not in distance_matrix and distance_metric not in distance_matrix:
-            print("cannot precomputed")
+            # print("cannot precomputed")
             eucl_matrix = precomputed_matrix(genes_count, distance_metric='euclidean')
             distance_matrix['euclidean'] = eucl_matrix
             dist_matrix = precomputed_matrix(genes_count, distance_metric=distance_metric)
             distance_matrix[distance_metric] = dist_matrix
 
         elif ("hierarchical_clustering" in clusterMethods or "affinity_clustering" in clusterMethods) and distance_metric not in distance_matrix:
-            print("precomputed")
+            # print("precomputed")
             x = precomputed_matrix(genes_count, distance_metric=distance_metric, tree=tree, otu_ids=otu_ids)
             distance_matrix[distance_metric] = x
 
@@ -47,28 +47,28 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
             distance_matrix[distance_metric] = dist_matrix
 
     if 'k_avg' in clusterMethods:
-        print("KMeans")
+        # print("KMeans")
         model = KMeans(n_clusters=int(n_clusters), n_init='auto')
         calc_matrix = np.array([*distance_matrix["euclidean"]])
         model.fit(calc_matrix)
         predictions = model.predict(calc_matrix)
 
     elif 'bayesian_gaussian_mixture' in clusterMethods:
-        print("BayesianGaussianMixture")
+        # print("BayesianGaussianMixture")
         model = BayesianGaussianMixture(n_components=int(n_clusters), random_state=random_state)
         calc_matrix = np.array([*distance_matrix["euclidean"]])
         model.fit(calc_matrix)
         predictions = model.predict(calc_matrix)
 
     elif 'hierarchical_clustering' in clusterMethods and linkage != "ward":
-        print("AgglomerativeClustering")
+        # print("AgglomerativeClustering")
         model = AgglomerativeClustering(n_clusters=int(n_clusters), metric="precomputed", linkage=linkage)
         calc_matrix = np.array([*distance_matrix[distance_metric]])
         model.fit_predict(calc_matrix)
         predictions = model.labels_
 
     elif 'affinity_clustering' in clusterMethods:
-        print("AffinityPropagation")
+        # print("AffinityPropagation")
         model = AffinityPropagation(affinity='precomputed', random_state=random_state)
         calc_matrix = np.array([*distance_matrix[distance_metric]])
         model.fit(calc_matrix)
@@ -109,9 +109,9 @@ def statistic_test(data, distance_metric, statMethods, clusterMethods, n_cluster
         distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods, distance_metric=distance_metric, n_clusters=n_clusters, linkage=linkage,
                                                            random_state=random_state, tree=tree, otu_ids=otu_ids)
         sample_md = pd.DataFrame(predictions, index=list(strains), columns=["subject"])
-        if '0' in statMethods:
+        if 'anosim' in statMethods:
             test_result["ANOSIM"] = anosim(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)
-        if '1' in statMethods:
+        if 'permanova' in statMethods:
             test_result["PERMANOVA"] = permanova(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)
 
         return test_result
@@ -175,34 +175,34 @@ def buildPlots(data, methods, clusterMethods, perplexity="10", n_clusters='2', l
                                                 random_state=random_state, tree=tree, otu_ids=otu_ids)
                 t_sne_init = "pca"
             else:
-                if "0" in methods:
-                    print("cannot precomputed matrix for plots, all switched to euclidean")
+                if "pca" in methods:
+                    # print("cannot precomputed matrix for plots, all switched to euclidean")
                     distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods,
                                                     n_clusters=n_clusters, linkage=linkage, distance_metric='euclidean',
                                                     random_state=random_state, tree=tree, otu_ids=otu_ids)
 
 
-                if '1' in methods or "2" in methods:
+                if 'mds' in methods or "t_sne" in methods:
                     distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods, n_clusters=n_clusters,
                                                     linkage=linkage, distance_metric=distance_metric,
                                                     random_state=random_state, tree=tree, otu_ids=otu_ids)
                     t_sne_init = "random"
 
 
-            if '0' in methods:
+            if 'pca' in methods:
                 # only eucledian distance
                 methodData = PCA(n_components=2, random_state=0)
                 x = np.array([*distance_matrix["euclidean"]])
                 components = pd.DataFrame(data=methodData.fit_transform(x), columns=['Component 1', 'Component 2'])
                 plots['PCA'] = buildScatter(genes_count, components, predictions)
 
-            if '1' in methods:
+            if 'mds' in methods:
                 methodData = MDS(random_state=0, dissimilarity="precomputed", normalized_stress="auto")
                 x = np.array([*distance_matrix[distance_metric]])
                 components = pd.DataFrame(data=methodData.fit_transform(x), columns=['Component 1', 'Component 2'])
                 plots['MDS'] = buildScatter(genes_count, components, predictions)
 
-            if '2' in methods:
+            if 't_sne' in methods:
                 methodData = TSNE(random_state=0, perplexity=float(perplexity), metric="precomputed", init=t_sne_init)
                 x = np.array([*distance_matrix[distance_metric]])
                 components = pd.DataFrame(data=methodData.fit_transform(x), columns=['Component 1', 'Component 2'])
