@@ -19,7 +19,7 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
                    random_state=None, tree=None, otu_ids=None):
 
     genes_count = data.getCount()
-    distance_matrix = data.getCumputedMatrix()
+    distance_matrix = data.getComputedMatrix()
     print(distance_matrix.keys())
     predictions = []
 
@@ -74,7 +74,7 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
         model.fit(calc_matrix)
         predictions = model.labels_
 
-    data.setCumputedMatrix(distance_matrix)
+    data.setComputedMatrix(distance_matrix)
     return distance_matrix, predictions
 
 
@@ -94,7 +94,7 @@ def precomputed_matrix(genes_count, distance_metric='euclidean', tree=None, otu_
 
 
 
-def statistic_test(data, distance_metric, statMethods, clusterMethods, n_clusters="2", linkage='ward',
+def statistic_test(data, statMethods, clusterMethods, distance_metric= 'euclidean', n_clusters="2", linkage='ward',
                    tree=None, otu_ids=None, random_state=None):
     genes_count = data.getCount()
     test_result = {}
@@ -110,9 +110,9 @@ def statistic_test(data, distance_metric, statMethods, clusterMethods, n_cluster
                                                            random_state=random_state, tree=tree, otu_ids=otu_ids)
         sample_md = pd.DataFrame(predictions, index=list(strains), columns=["subject"])
         if 'anosim' in statMethods:
-            test_result["ANOSIM"] = anosim(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)
+            test_result["ANOSIM"] = [*anosim(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)]
         if 'permanova' in statMethods:
-            test_result["PERMANOVA"] = permanova(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)
+            test_result["PERMANOVA"] = [*permanova(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)]
 
         return test_result
 

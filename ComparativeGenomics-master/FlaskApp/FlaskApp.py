@@ -6,7 +6,8 @@ from hadlers.keywordsClassifier import keywordsClassify
 from hadlers.classifier import classifyFunctions
 from hadlers.clsDisplay import displayClassification
 from hadlers.counter import countFunctions
-from hadlers.visualize import buildPlots
+from hadlers.visualize_statistics import buildPlots
+from hadlers.visualize_statistics import statistic_test
 from hadlers.validator import validate
 from hadlers.memoryzip_plots import get_zip_buffer
 from sys import getsizeof
@@ -96,11 +97,6 @@ def count():
 
     return render_template("analisisCount.html", countTable=data.getCount())
 
-    # categories = request.form.getlist('categories')
-    # systems = request.form.getlist('systems')
-    #
-    # return render_template("analisisCount.html", countTable=data.getCount())
-
 @app.route('/visualize', methods=['post'])
 def visualize():
     methods = request.form.getlist('method')
@@ -108,6 +104,10 @@ def visualize():
     clusterMethods = request.form.getlist('clusterMethod')
     n_clusters = request.form['n_clusters']
     linkage = request.form['linkage']
+    # distance_metric='euclidean'
+    # tree=None
+    # otu_ids=None
+    # random_state=None
     
     data.setPlots(buildPlots(data, methods, perplexity, clusterMethods, n_clusters, linkage))
     
@@ -142,10 +142,23 @@ def uploadBreakdown():
 @app.route('/analyze', methods=['POST'])
 def analyze():
     """Проведение оценки статистической достоверности различий на странице анализа"""
-    permanova = request.form.get('permanova', 'off')  # on - если отмечена галочка на фронте, иначе - off
-    anosism = request.form.get('anosism', 'off')
 
-    print(permanova, anosism)
+    # permanova = request.form.get('permanova', 'off')  # on - если отмечена галочка на фронте, иначе - off
+    # anosism = request.form.get('anosism', 'off')
+
+    statMethods = [] #"тут должен быть список выбраных методов Permanova, Anosim или оба"
+    clusterMethods = ""
+    distance_metric = ""
+    n_clusters=""
+    linkage=""
+    tree=""
+    otu_ids=""
+    random_state=""
+
+    data.setStatResults(statistic_test(data, statMethods, clusterMethods, distance_metric, n_clusters, linkage,
+                   tree, otu_ids, random_state))
+
+    # print(permanova, anosism)
     return jsonify({'status': '200'})
 
 if __name__ == "__main__":
