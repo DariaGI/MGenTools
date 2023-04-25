@@ -92,12 +92,13 @@ def fullClassified():
 @app.route('/count', methods=['post'])
 def count():
     request_json_data = request.get_json()
-    print(request_json_data)
+    data.setCount(countFunctions(data, request_json_data))
 
-    return jsonify({'message': 'Hello World!'})
+    return render_template("analisisCount.html", countTable=data.getCount())
+
     # categories = request.form.getlist('categories')
     # systems = request.form.getlist('systems')
-    # data.setCount(countFunctions(data, categories, systems))    
+    #
     # return render_template("analisisCount.html", countTable=data.getCount())
 
 @app.route('/visualize', methods=['post'])
