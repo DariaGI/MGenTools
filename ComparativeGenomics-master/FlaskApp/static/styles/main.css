@@ -3,7 +3,7 @@ h5 {
 }
 
 select {
-    margin: 10px auto;
+    margin: 10px 0;
     border: 1px solid lightgray;
     border-radius: 3px;
     outline: none;

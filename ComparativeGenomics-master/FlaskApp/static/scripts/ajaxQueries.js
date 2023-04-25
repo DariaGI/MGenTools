@@ -84,7 +84,6 @@ $(function () {
         const vslForm = document.getElementById('vslForm');
         const formData = new FormData(vslForm);
         
-        console.log(formData);
         $('#vslSlide').html(loaderImg);
 
         const response = await request({
@@ -112,4 +111,26 @@ $(function () {
             },
         });
     });
+});
+
+document.getElementById('vslExportPlotsBtn').addEventListener('click', async () => {
+    const exportFormatSelect = document.getElementById('exportFormat');
+    const exportFormat = exportFormatSelect.options[exportFormatSelect.selectedIndex].value;
+
+    const response = await request({
+        method: 'GET',
+        url: `/download/plots?export_format=${exportFormat}`
+    });
+    
+});
+
+document.getElementById('analyzeBtn').addEventListener('click', async () => {
+    const formElem = document.getElementById('analyzeForm');
+    const formData = new FormData(formElem);
+
+    const response = await request({
+        method: 'POST',
+        url: '/analyze',
+        data: formData
+    })
 });

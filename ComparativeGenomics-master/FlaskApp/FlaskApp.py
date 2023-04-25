@@ -127,7 +127,7 @@ def download(type, filename):
 
 @app.route('/download/plots', methods=['get'])
 def download_plots():
-    export_format = "тут надо их откуда-то принять наверное)"
+    export_format = request.args.get('export_format') # Получает формат для экспорта из query param
     buff = get_zip_buffer(data, export_format)
     return send_file(buff, mimetype='application/zip', as_attachment=True, attachment_filename="zip_plots.zip")
 
@@ -138,6 +138,15 @@ def uploadBreakdown():
     error, validated = validate(breakdown, 'breakdown')
     data.setBreakdown(validated)
     return  render_template("breakdown.html", df=data.getBreakdown(), error=error)
+
+@app.route('/analyze', methods=['POST'])
+def analyze():
+    """Проведение оценки статистической достоверности различий на странице анализа"""
+    permanova = request.form.get('permanova', 'off')  # on - если отмечена галочка на фронте, иначе - off
+    anosism = request.form.get('anosism', 'off')
+
+    print(permanova, anosism)
+    return jsonify({'status': '200'})
 
 if __name__ == "__main__":
     app.run(debug=settings.DEBUG)
