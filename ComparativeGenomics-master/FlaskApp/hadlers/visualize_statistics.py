@@ -133,7 +133,8 @@ def match(table_to, table_from):
 
 
 def buildScatter(data, components, predictions):
-    components["Strain"] = data["Strain"]
+    genes_count = data.getCount()
+    components["Strain"] = genes_count["Strain"]
     components['Breakdown Type'] = 'unknown'
 
     if not data.getBreakdown().is_empty():
@@ -194,19 +195,19 @@ def buildPlots(data, methods, clusterMethods, perplexity="10", n_clusters='2', l
                 methodData = PCA(n_components=2, random_state=0)
                 x = np.array([*distance_matrix["euclidean"]])
                 components = pd.DataFrame(data=methodData.fit_transform(x), columns=['Component 1', 'Component 2'])
-                plots['PCA'] = buildScatter(genes_count, components, predictions)
+                plots['PCA'] = buildScatter(data, components, predictions)
 
             if 'mds' in methods:
                 methodData = MDS(random_state=0, dissimilarity="precomputed", normalized_stress="auto")
                 x = np.array([*distance_matrix[distance_metric]])
                 components = pd.DataFrame(data=methodData.fit_transform(x), columns=['Component 1', 'Component 2'])
-                plots['MDS'] = buildScatter(genes_count, components, predictions)
+                plots['MDS'] = buildScatter(data, components, predictions)
 
             if 't_sne' in methods:
                 methodData = TSNE(random_state=0, perplexity=float(perplexity), metric="precomputed", init=t_sne_init)
                 x = np.array([*distance_matrix[distance_metric]])
                 components = pd.DataFrame(data=methodData.fit_transform(x), columns=['Component 1', 'Component 2'])
-                plots['t-SNE'] = buildScatter(genes_count, components, predictions)
+                plots['t-SNE'] = buildScatter(data, components, predictions)
 
         else:
             x = []
