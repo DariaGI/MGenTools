@@ -31,7 +31,7 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
         if distance_metric not in distance_matrix:
             dist_matrix = precomputed_matrix(genes_count, distance_metric=distance_metric)
             distance_matrix[distance_metric] = dist_matrix
-            if ("k_avg" in clusterMethods or "bayesian_gaussian_mixture" in clusterMethods) and 'euclidean' not in distance_matrix:
+            if "k_avg" in clusterMethods and 'euclidean' not in distance_matrix:
                 eucl_matrix = precomputed_matrix(genes_count, distance_metric='euclidean')
                 distance_matrix['euclidean'] = eucl_matrix
 
@@ -51,7 +51,7 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
     elif 'bayesian_gaussian_mixture' in clusterMethods:
         # print("BayesianGaussianMixture")
         model = BayesianGaussianMixture(n_components=int(n_clusters), random_state=random_state)
-        calc_matrix = np.array([*distance_matrix["euclidean"]])
+        calc_matrix = np.array([*distance_matrix[distance_metric]])
         model.fit(calc_matrix)
         predictions = model.predict(calc_matrix)
 
