@@ -129,7 +129,8 @@ def download(type, filename):
 def download_plots():
     export_format = request.args.get('export_format') # Получает формат для экспорта из query param
     buff = get_zip_buffer(data, export_format)
-    return send_file(buff, mimetype='application/zip', as_attachment=True, attachment_filename="zip_plots.zip")
+    # return send_file(buff, mimetype='application/zip', as_attachment=True, attachment_filename="zip_plots.zip")
+    return send_file(buff, mimetype='application/zip', as_attachment=True, download_name="all_plots.zip")
 
 
 @app.route('/uploadBreakdown', methods=['post'])

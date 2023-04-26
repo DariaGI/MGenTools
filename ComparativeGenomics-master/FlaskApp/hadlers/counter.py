@@ -5,6 +5,7 @@ import numpy as np
 
 
 def countFunctions(data, categories_systems):
+    # print(categories_systems)
     files = data.getClassified()
     categories_names = ["C_" + key for key in categories_systems if categories_systems[key]['selected']]
     systems_names = ["S_" + key + "_" + sys for key in categories_systems for sys in categories_systems[key]["systems"]]
