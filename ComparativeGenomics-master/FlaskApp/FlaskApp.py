@@ -99,17 +99,20 @@ def count():
 
 @app.route('/visualize', methods=['post'])
 def visualize():
-    methods = request.form.getlist('method')
-    perplexity = request.form['perplexity']
-    clusterMethods = request.form.getlist('clusterMethod')
-    n_clusters = request.form['n_clusters']
-    linkage = request.form['linkage']
+    params = dict(
+        data = data,
+        methods = request.form.getlist('method'), 
+        perplexity = request.form['perplexity'], 
+        clusterMethods = request.form.getlist('clusterMethod'),
+        n_clusters = request.form['n_clusters'],
+        linkage = request.form['linkage'],
+    )
     # distance_metric='euclidean'
     # tree=None
     # otu_ids=None
     # random_state=None
     
-    data.setPlots(buildPlots(data, methods, perplexity, clusterMethods, n_clusters, linkage))
+    data.setPlots(buildPlots(**params))
     
     return render_template("analisisVsl.html", plots=data.getPlots())
 
@@ -146,18 +149,19 @@ def analyze():
 
     # permanova = request.form.get('permanova', 'off')  # on - если отмечена галочка на фронте, иначе - off
     # anosism = request.form.get('anosism', 'off')
-
-    statMethods = [] #"тут должен быть список выбраных методов Permanova, Anosim или оба"
-    clusterMethods = ""
-    distance_metric = ""
-    n_clusters=""
-    linkage=""
-    tree=""
-    otu_ids=""
-    random_state=""
-
-    data.setStatResults(statistic_test(data, statMethods, clusterMethods, distance_metric, n_clusters, linkage,
-                   tree, otu_ids, random_state))
+    params = dict(
+        data = data,
+        statMethods = request.form.getlist('statMethod'), #"тут должен быть список выбраных методов Permanova, Anosim или оба"
+        clusterMethods = "",
+        distance_metric = "",
+        n_clusters="",
+        linkage="",
+        tree="",
+        otu_ids="",
+        random_state="",
+    )
+    print(params)
+    data.setStatResults(statistic_test(**params))
 
     # print(permanova, anosism)
     return jsonify({'status': '200'})

@@ -86,18 +86,18 @@ unifracSelect.addEventListener('change', () => {
     }
 })
 
-const clusterMethodSelect = document.getElementById('clusterMethod');
+// const clusterMethodSelect = document.getElementById('clusterMethod');
 
-clusterMethodSelect.addEventListener('change', () => {
-    const selected = clusterMethodSelect.options[clusterMethodSelect.selectedIndex];
-    const target = selected.getAttribute('data-target');
-    if (selected.value === 'none' || selected.value === 'k_avg') {
-        document.querySelectorAll('.togglable').forEach(elem => elem.classList.add('d-none'));
-    }
-    if (target === null) return;
-    document.querySelectorAll('.togglable').forEach(elem => elem.classList.add('d-none'));
-    document.querySelector(target).classList.toggle('d-none');
-});
+// clusterMethodSelect.addEventListener('change', () => {
+//     const selected = clusterMethodSelect.options[clusterMethodSelect.selectedIndex];
+//     const target = selected.getAttribute('data-target');
+//     if (selected.value === 'none' || selected.value === 'k_avg') {
+//         document.querySelectorAll('.togglable').forEach(elem => elem.classList.add('d-none'));
+//     }
+//     if (target === null) return;
+//     document.querySelectorAll('.togglable').forEach(elem => elem.classList.add('d-none'));
+//     document.querySelector(target).classList.toggle('d-none');
+// });
 
 document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
     checkbox.checked = false;

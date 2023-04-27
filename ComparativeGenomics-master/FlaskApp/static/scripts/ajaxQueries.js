@@ -83,6 +83,7 @@ $(function () {
     $('#vslFormBtn').click(async () => {
         const vslForm = document.getElementById('vslForm');
         const formData = new FormData(vslForm);
+        console.debug('Построить график: ', formData);
         
         $('#vslSlide').html(loaderImg);
 
@@ -127,6 +128,8 @@ document.getElementById('vslExportPlotsBtn').addEventListener('click', async () 
 document.getElementById('analyzeBtn').addEventListener('click', async () => {
     const formElem = document.getElementById('analyzeForm');
     const formData = new FormData(formElem);
+
+    console.debug('Провести анализ: ', formData);
 
     const response = await request({
         method: 'POST',
