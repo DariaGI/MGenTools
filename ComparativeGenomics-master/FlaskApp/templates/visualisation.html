@@ -34,7 +34,7 @@
         <option value="k_avg">К-средних</option>
         <option value="hierarchical_clustering" data-target="#linkage">Иерархическая кластеризация</option>
         <option value="affinity_clustering" data-target="#affinity_clustering__random_state">Аффинная кластеризация</option>
-        <option value="bayesian_gaussian_mixture_mixture" data-target="#bayesian_gaussian_mixture__random_state">Байесовская гауссовская смесь</option>
+        <option value="bayesian_gaussian_mixture" data-target="#bayesian_gaussian_mixture__random_state">Байесовская гауссовская смесь</option>
     </select>
 
     <div id="affinity_clustering__random_state" class="d-none togglable">
@@ -87,12 +87,12 @@
 </span>
 <div class="d-flex" style="justify-content: space-between;">
     <select id="exportFormat">
-        <option value="png">png</option>
+        <option value="png" selected>png</option>
         <option value="jpeg">jpeg</option>
         <option value="svg">svg</option>
         <option value="pdf">pdf</option>
     </select>
-    <button id="vslExportPlotsBtn" class="btn btn-outline-secondary">Экспорт графиков</button>
+    <a href="/download/plots?export_format=png" id="vslExportPlotsBtn" class="btn btn-outline-secondary">Экспорт графиков</a>
 </div>
 
 <form id="analyzeForm">

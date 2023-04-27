@@ -114,15 +114,12 @@ $(function () {
     });
 });
 
-document.getElementById('vslExportPlotsBtn').addEventListener('click', async () => {
-    const exportFormatSelect = document.getElementById('exportFormat');
-    const exportFormat = exportFormatSelect.options[exportFormatSelect.selectedIndex].value;
 
-    const response = await request({
-        method: 'GET',
-        url: `/download/plots?export_format=${exportFormat}`
-    });
-    
+const exportFormatSelect = document.getElementById('exportFormat');
+const exportPlotsBtn = document.getElementById('vslExportPlotsBtn');
+exportFormatSelect.addEventListener('click', async () => {
+    const exportFormat = exportFormatSelect.options[exportFormatSelect.selectedIndex].value;
+    exportPlotsBtn.setAttribute('href', `/download/plots?export_format=${exportFormat}`);
 });
 
 document.getElementById('analyzeBtn').addEventListener('click', async () => {
