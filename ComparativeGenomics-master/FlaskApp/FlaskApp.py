@@ -1,3 +1,5 @@
+import csv
+
 from flask import Flask, request, render_template, send_file, make_response, Response, jsonify
 import pandas as pd
 import polars as pl
@@ -12,6 +14,7 @@ from hadlers.validator import validate
 from hadlers.memoryzip_plots import get_zip_buffer
 from sys import getsizeof
 import os
+import io
 
 from logging.config import dictConfig
 
@@ -68,6 +71,7 @@ def reset():
 
 @app.route('/classify', methods=['post'])
 def classify():
+    # data.reset()
     cls_types = request.form.getlist('cls_type')
     rastDownloads = request.files.getlist("rastDownloads[]")
     userCls = request.files.get("userCls")
@@ -92,6 +96,8 @@ def fullClassified():
 
 @app.route('/count', methods=['post'])
 def count():
+    data.setResCount()
+    data.resComputedMatrix()
     request_json_data = request.get_json()
     data.setCount(countFunctions(data, request_json_data))
 
@@ -99,6 +105,7 @@ def count():
 
 @app.route('/visualize', methods=['post'])
 def visualize():
+    data.resPlots()
     params = dict(
         data = data,
         methods = request.form.getlist('method'), 
@@ -107,6 +114,8 @@ def visualize():
         n_clusters = request.form['n_clusters'],
         linkage = request.form['linkage'],
     )
+
+    print(request.form.getlist('clusterMethod'))
     # distance_metric='euclidean'
     # tree=None
     # otu_ids=None
@@ -132,7 +141,9 @@ def download(type, filename):
 def download_plots():
     export_format = request.args.get('export_format') # Получает формат для экспорта из query param
     buff = get_zip_buffer(data, export_format)
-    # return send_file(buff, mimetype='application/zip', as_attachment=True, attachment_filename="zip_plots.zip")
+    with open("all_plots.zip", "wb") as outfile:
+        # Copy the BytesIO stream to the output file
+        outfile.write(buff.getbuffer())
     return send_file(buff, mimetype='application/zip', as_attachment=True, download_name="all_plots.zip")
 
 

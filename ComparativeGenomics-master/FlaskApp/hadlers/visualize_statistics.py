@@ -55,12 +55,18 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
         model.fit(calc_matrix)
         predictions = model.predict(calc_matrix)
 
-    elif 'hierarchical_clustering' in clusterMethods and linkage != "ward":
-        # print("AgglomerativeClustering")
-        model = AgglomerativeClustering(n_clusters=int(n_clusters), metric="precomputed", linkage=linkage)
-        calc_matrix = np.array([*distance_matrix[distance_metric]])
-        model.fit_predict(calc_matrix)
-        predictions = model.labels_
+    elif 'hierarchical_clustering' in clusterMethods:
+        if linkage == "ward":
+            # print("AgglomerativeClustering")
+            model = AgglomerativeClustering(n_clusters=int(n_clusters), metric="euclidean", linkage=linkage)
+            calc_matrix = np.array([*distance_matrix["euclidean"]])
+            model.fit_predict(calc_matrix)
+            predictions = model.labels_
+        elif linkage != "ward":
+            model = AgglomerativeClustering(n_clusters=int(n_clusters), metric="precomputed", linkage=linkage)
+            calc_matrix = np.array([*distance_matrix[distance_metric]])
+            model.fit_predict(calc_matrix)
+            predictions = model.labels_
 
     elif 'affinity_clustering' in clusterMethods:
         # print("AffinityPropagation")
@@ -70,6 +76,8 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
         predictions = model.labels_
 
     data.setComputedMatrix(distance_matrix)
+
+    print(predictions)
     return distance_matrix, predictions
 
 

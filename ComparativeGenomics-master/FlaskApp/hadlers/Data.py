@@ -58,6 +58,9 @@ class Data():
     def getCount(self):
         return self.count
 
+    def setResCount(self):
+        self.count = pl.DataFrame()
+
     def setHierarchy(self, file):
         self.hierarchy = file
 
@@ -76,6 +79,11 @@ class Data():
     def getPlots(self):
         return self.plots
 
+    def resPlots(self):
+        self.plots = {}
+
+
+
     def setBreakdown(self, file):
         self.breakdown = file
 
@@ -88,10 +96,15 @@ class Data():
     def getComputedMatrix(self):
         return self.distance_matrix
 
+    def resComputedMatrix(self):
+        self.distance_matrix = {}
+
+
     def setStatResults(self, file):
         self.statistics_results= file
 
     def getStatResults(self):
         return self.statistics_results
+
 
 
