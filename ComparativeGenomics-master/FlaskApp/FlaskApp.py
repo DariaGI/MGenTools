@@ -107,24 +107,28 @@ def count():
 def visualize():
     data.resPlots()
 
-    random_state = 5
-    if bool(request.form.get('affinity_clustering__input')):
-        random_state = request.form.get('affinity_clustering__input')
-    elif bool(request.form.get('bayesian_gaussian_mixture__input')):
+    random_state = 0
+    dbscan_eps = 0.05
+    if bool(request.form.get('bayesian_gaussian_mixture__input')):
         random_state = request.form.get('bayesian_gaussian_mixture__input')
 
+    if bool(request.form.get("DBSCAN__input")):
+        dbscan_eps = request.form.get("DBSCAN__input")
+
+
     params = dict(
-        data = data,
-        methods = request.form.getlist('method'), 
-        perplexity = request.form['perplexity'], 
-        clusterMethods = request.form.getlist('clusterMethod'),
-        n_clusters = request.form['n_clusters'],
-        linkage = request.form['linkage'],
-        distance_metric= request.form["convergenceType"],
-        random_state = random_state
+        data=data,
+        methods=request.form.getlist('method'),
+        perplexity=request.form['perplexity'],
+        clusterMethods=request.form.getlist('clusterMethod'),
+        n_clusters=request.form['n_clusters'],
+        linkage=request.form['linkage'],
+        distance_metric=request.form["convergenceType"],
+        random_state=random_state,
+        eps=dbscan_eps
     )
 
-    print(request.form["convergenceType"])
+    # print(request.form["convergenceType"])
 
     
     data.setPlots(buildPlots(**params))

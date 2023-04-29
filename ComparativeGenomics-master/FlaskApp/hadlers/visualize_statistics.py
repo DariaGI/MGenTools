@@ -1,6 +1,6 @@
 from sklearn.mixture import BayesianGaussianMixture
 from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans, AgglomerativeClustering, AffinityPropagation
+from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN
 from sklearn.decomposition import PCA
 from sklearn.manifold import MDS, TSNE
 import pandas as pd
@@ -14,24 +14,23 @@ from skbio.stats.distance import anosim
 from skbio.stats.distance import permanova
 
 
-
-def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distance_metric='euclidean',
+def clusterization(data, clusterMethods, eps=0.05, n_clusters="2", linkage='ward', distance_metric='euclidean',
                    random_state=None, tree=None, otu_ids=None):
-
     genes_count = data.getCount()
     distance_matrix = data.getComputedMatrix()
     print(distance_matrix.keys())
     predictions = []
 
     if distance_metric == 'euclidean' and distance_metric not in distance_matrix:
-            x = precomputed_matrix(genes_count, distance_metric)
-            distance_matrix['euclidean'] = x
+        x = precomputed_matrix(genes_count, distance_metric)
+        distance_matrix['euclidean'] = x
 
     else:
         if distance_metric not in distance_matrix:
             dist_matrix = precomputed_matrix(genes_count, distance_metric=distance_metric)
             distance_matrix[distance_metric] = dist_matrix
-            if ("k_avg" in clusterMethods or 'bayesian_gaussian_mixture' in clusterMethods) and 'euclidean' not in distance_matrix:
+            if (
+                    "k_avg" in clusterMethods or 'bayesian_gaussian_mixture' in clusterMethods) and 'euclidean' not in distance_matrix:
                 eucl_matrix = precomputed_matrix(genes_count, distance_metric='euclidean')
                 distance_matrix['euclidean'] = eucl_matrix
 
@@ -50,7 +49,7 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
 
     elif 'bayesian_gaussian_mixture' in clusterMethods:
         # print("BayesianGaussianMixture")
-        model = BayesianGaussianMixture(n_components=int(n_clusters), random_state=int(random_state))
+        model = BayesianGaussianMixture(n_components=int(n_clusters), random_state=int(random_state), covariance_type="full")
         calc_matrix = np.array([*distance_matrix["euclidean"]])
         model.fit(calc_matrix)
         predictions = model.predict(calc_matrix)
@@ -68,9 +67,9 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
             model.fit_predict(calc_matrix)
             predictions = model.labels_
 
-    elif 'affinity_clustering' in clusterMethods:
+    elif 'DBSCAN' in clusterMethods:
         # print("AffinityPropagation")
-        model = AffinityPropagation(affinity='precomputed', random_state=int(random_state))
+        model = DBSCAN(eps=float(eps), min_samples=3, metric='precomputed')
         calc_matrix = np.array([*distance_matrix[distance_metric]])
         model.fit(calc_matrix)
         predictions = model.labels_
@@ -96,8 +95,8 @@ def precomputed_matrix(genes_count, distance_metric='euclidean', tree=None, otu_
     return bc_dm
 
 
-
-def statistic_test(data, statMethods, clusterMethods, distance_metric= 'euclidean', n_clusters="2", linkage='ward',
+def statistic_test(data, statMethods, clusterMethods, eps=0.05, distance_metric='euclidean', n_clusters="2",
+                   linkage='ward',
                    tree=None, otu_ids=None, random_state=None):
     genes_count = data.getCount()
     test_result = {}
@@ -109,13 +108,17 @@ def statistic_test(data, statMethods, clusterMethods, distance_metric= 'euclidea
     strains = genes_count["Strain"]
 
     if len(strains) > 1:
-        distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods, distance_metric=distance_metric, n_clusters=n_clusters, linkage=linkage,
-                                                           random_state=random_state, tree=tree, otu_ids=otu_ids)
+        distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods,
+                                                      distance_metric=distance_metric, eps=eps, n_clusters=n_clusters,
+                                                      linkage=linkage,
+                                                      random_state=random_state, tree=tree, otu_ids=otu_ids)
         sample_md = pd.DataFrame(predictions, index=list(strains), columns=["subject"])
         if 'anosim' in statMethods:
-            test_result["ANOSIM"] = [*anosim(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)]
+            test_result["ANOSIM"] = [
+                *anosim(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)]
         if 'permanova' in statMethods:
-            test_result["PERMANOVA"] = [*permanova(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)]
+            test_result["PERMANOVA"] = [
+                *permanova(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)]
 
         return test_result
 
@@ -124,15 +127,12 @@ def statistic_test(data, statMethods, clusterMethods, distance_metric= 'euclidea
         return test_result
 
 
-
-
 def match(table_to, table_from):
     for rowIndex, row in table_to.iterrows():
         strain = row['Strain']
         table_from_indexes = table_from.filter(pl.col("Strain") == strain)
         if (len(table_from_indexes)) > 0:
             table_to.loc[(rowIndex, 'Breakdown Type')] = table_from_indexes[0, 'Breakdown Type'].strip()
-
 
 
 def buildScatter(data, components, predictions):
@@ -159,7 +159,7 @@ def buildScatter(data, components, predictions):
     return pltJSON
 
 
-def buildPlots(data, methods, clusterMethods, perplexity="10", n_clusters='2', linkage='ward',
+def buildPlots(data, methods, clusterMethods, eps=0.05, perplexity="10", n_clusters='2', linkage='ward',
                distance_metric='euclidean', tree=None, otu_ids=None, random_state=None):
     plots = {}
     genes_count = data.getCount()
@@ -174,24 +174,28 @@ def buildPlots(data, methods, clusterMethods, perplexity="10", n_clusters='2', l
     if len(strains) > 1:
         if len(features) > 1:
             if distance_metric == "eucledian":
-                distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods, n_clusters=n_clusters,
-                                                linkage=linkage, distance_metric=distance_metric,
-                                                random_state=int(random_state), tree=tree, otu_ids=otu_ids)
+                distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods, eps=eps,
+                                                              n_clusters=n_clusters,
+                                                              linkage=linkage, distance_metric=distance_metric,
+                                                              random_state=int(random_state), tree=tree,
+                                                              otu_ids=otu_ids)
                 t_sne_init = "pca"
             else:
                 if "pca" in methods:
                     # print("cannot precomputed matrix for plots, all switched to euclidean")
-                    distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods,
-                                                    n_clusters=n_clusters, linkage=linkage, distance_metric='euclidean',
-                                                    random_state=int(random_state), tree=tree, otu_ids=otu_ids)
-
+                    distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods, eps=eps,
+                                                                  n_clusters=n_clusters, linkage=linkage,
+                                                                  distance_metric='euclidean',
+                                                                  random_state=int(random_state), tree=tree,
+                                                                  otu_ids=otu_ids)
 
                 if 'mds' in methods or "t_sne" in methods:
-                    distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods, n_clusters=n_clusters,
-                                                    linkage=linkage, distance_metric=distance_metric,
-                                                    random_state=int(random_state), tree=tree, otu_ids=otu_ids)
+                    distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods, eps=eps,
+                                                                  n_clusters=n_clusters,
+                                                                  linkage=linkage, distance_metric=distance_metric,
+                                                                  random_state=int(random_state), tree=tree,
+                                                                  otu_ids=otu_ids)
                     t_sne_init = "random"
-
 
             if 'pca' in methods:
                 # only eucledian distance
@@ -224,4 +228,3 @@ def buildPlots(data, methods, clusterMethods, perplexity="10", n_clusters='2', l
             plots['No method'] = buildScatter(data, components, strains)
 
     return plots
-
