@@ -106,6 +106,13 @@ def count():
 @app.route('/visualize', methods=['post'])
 def visualize():
     data.resPlots()
+
+    random_state = 5
+    if bool(request.form.get('affinity_clustering__input')):
+        random_state = request.form.get('affinity_clustering__input')
+    elif bool(request.form.get('bayesian_gaussian_mixture__input')):
+        random_state = request.form.get('bayesian_gaussian_mixture__input')
+
     params = dict(
         data = data,
         methods = request.form.getlist('method'), 
@@ -113,13 +120,12 @@ def visualize():
         clusterMethods = request.form.getlist('clusterMethod'),
         n_clusters = request.form['n_clusters'],
         linkage = request.form['linkage'],
+        distance_metric= request.form["convergenceType"],
+        random_state = random_state
     )
 
-    print(request.form.getlist('clusterMethod'))
-    # distance_metric='euclidean'
-    # tree=None
-    # otu_ids=None
-    # random_state=None
+    print(request.form["convergenceType"])
+
     
     data.setPlots(buildPlots(**params))
     
@@ -163,10 +169,10 @@ def analyze():
     params = dict(
         data = data,
         statMethods = request.form.getlist('statMethod'), #"тут должен быть список выбраных методов Permanova, Anosim или оба"
-        clusterMethods = "",
+        clusterMethods = request.form.getlist('clusterMethod'),
         distance_metric = "",
-        n_clusters="",
-        linkage="",
+        n_clusters= request.form['n_clusters'],
+        linkage= request.form['linkage'],
         tree="",
         otu_ids="",
         random_state="",

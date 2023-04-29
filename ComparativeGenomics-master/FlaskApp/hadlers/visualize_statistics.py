@@ -31,7 +31,7 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
         if distance_metric not in distance_matrix:
             dist_matrix = precomputed_matrix(genes_count, distance_metric=distance_metric)
             distance_matrix[distance_metric] = dist_matrix
-            if "k_avg" in clusterMethods and 'euclidean' not in distance_matrix:
+            if ("k_avg" in clusterMethods or 'bayesian_gaussian_mixture' in clusterMethods) and 'euclidean' not in distance_matrix:
                 eucl_matrix = precomputed_matrix(genes_count, distance_metric='euclidean')
                 distance_matrix['euclidean'] = eucl_matrix
 
@@ -50,8 +50,8 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
 
     elif 'bayesian_gaussian_mixture' in clusterMethods:
         # print("BayesianGaussianMixture")
-        model = BayesianGaussianMixture(n_components=int(n_clusters), random_state=random_state)
-        calc_matrix = np.array([*distance_matrix[distance_metric]])
+        model = BayesianGaussianMixture(n_components=int(n_clusters), random_state=int(random_state))
+        calc_matrix = np.array([*distance_matrix["euclidean"]])
         model.fit(calc_matrix)
         predictions = model.predict(calc_matrix)
 
@@ -70,7 +70,7 @@ def clusterization(data, clusterMethods, n_clusters="2", linkage='ward', distanc
 
     elif 'affinity_clustering' in clusterMethods:
         # print("AffinityPropagation")
-        model = AffinityPropagation(affinity='precomputed', random_state=random_state)
+        model = AffinityPropagation(affinity='precomputed', random_state=int(random_state))
         calc_matrix = np.array([*distance_matrix[distance_metric]])
         model.fit(calc_matrix)
         predictions = model.labels_
@@ -176,20 +176,20 @@ def buildPlots(data, methods, clusterMethods, perplexity="10", n_clusters='2', l
             if distance_metric == "eucledian":
                 distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods, n_clusters=n_clusters,
                                                 linkage=linkage, distance_metric=distance_metric,
-                                                random_state=random_state, tree=tree, otu_ids=otu_ids)
+                                                random_state=int(random_state), tree=tree, otu_ids=otu_ids)
                 t_sne_init = "pca"
             else:
                 if "pca" in methods:
                     # print("cannot precomputed matrix for plots, all switched to euclidean")
                     distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods,
                                                     n_clusters=n_clusters, linkage=linkage, distance_metric='euclidean',
-                                                    random_state=random_state, tree=tree, otu_ids=otu_ids)
+                                                    random_state=int(random_state), tree=tree, otu_ids=otu_ids)
 
 
                 if 'mds' in methods or "t_sne" in methods:
                     distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods, n_clusters=n_clusters,
                                                     linkage=linkage, distance_metric=distance_metric,
-                                                    random_state=random_state, tree=tree, otu_ids=otu_ids)
+                                                    random_state=int(random_state), tree=tree, otu_ids=otu_ids)
                     t_sne_init = "random"
 
 
