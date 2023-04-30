@@ -1,0 +1,37 @@
+<table>
+    <thead>
+        <tr>
+            <td>Method name</td>
+            <td>Test statistic name</td>
+            <td>Sample size</td>
+            <td>Number of groups</td>
+            <td>Test statistic</td>
+            <td>P-Value</td>
+            <td>Number of Permutations</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% if result.anosim %}
+        <tr>
+            <td>{{ result.anosim.method_name }}</td>
+            <td>{{ result.anosim.test_statistic_name }}</td>
+            <td>{{ result.anosim.sample_size }}</td>
+            <td>{{ result.anosim.number_of_groups }}</td>
+            <td>{{ result.anosim.test_statisctic }}</td>
+            <td>{{ result.anosim.p_value }}</td>
+            <td>{{ result.anosim.number_of_permutations }}</td>
+        </tr>
+        {% endif %}
+        {% if result.permanova %}
+        <tr>
+            <td>{{ result.permanova.method_name }}</td>
+            <td>{{ result.permanova.test_statistic_name }}</td>
+            <td>{{ result.permanova.sample_size }}</td>
+            <td>{{ result.permanova.number_of_groups }}</td>
+            <td>{{ result.permanova.test_statisctic }}</td>
+            <td>{{ result.permanova.p_value }}</td>
+            <td>{{ result.permanova.number_of_permutations }}</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>

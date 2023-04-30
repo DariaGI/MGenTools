@@ -133,4 +133,7 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
         url: '/analyze',
         data: formData
     })
+    const resultHtml = document.createElement('div');
+    resultHtml.innerHTML = response;
+    document.body.append(resultHtml);
 });

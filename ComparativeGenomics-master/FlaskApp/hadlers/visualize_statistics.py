@@ -9,9 +9,12 @@ import plotly
 import plotly.express as px
 import json
 import numpy as np
-from skbio.diversity import beta_diversity
-from skbio.stats.distance import anosim
-from skbio.stats.distance import permanova
+try:
+    from skbio.diversity import beta_diversity
+    from skbio.stats.distance import anosim
+    from skbio.stats.distance import permanova
+except ImportError:
+    print("!ERROR! Could not import skbio ")
 
 
 def clusterization(data, clusterMethods, eps=0.05, n_clusters="2", linkage='ward', distance_metric='euclidean',
