@@ -51,7 +51,7 @@ $(function () {
             const category = categoryElems[i];
 
             const categoryName = category.querySelector('td.category__name').innerText;
-            const isSelected = category.querySelector('.btn-secondary') !== null;
+            const isSelected = category.querySelector('.category-btn.btn-secondary') !== null;
 
             const categorySistemElems = systemElems[i].querySelectorAll('input[type=checkbox]:checked');
             let categorySistems = [];
@@ -64,6 +64,8 @@ $(function () {
                 systems: categorySistems
             };
         }
+
+        console.log('Запущен рассчет', categories);
 
         $('#countSlide').html(loaderImg);
         $.ajax({
