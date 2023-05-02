@@ -19,7 +19,7 @@ import io
 from logging.config import dictConfig
 
 import settings
-
+from typing import List
 
 dictConfig({
     'version': 1,
@@ -168,6 +168,7 @@ def uploadBreakdown():
 @app.route('/analyze', methods=['POST'])
 def analyze():
     """Проведение оценки статистической достоверности различий на странице анализа"""
+    errors: List[str] = []  # Сюда передать список из ошибок 
     return render_template('statistic_test.html', result={
         'anosim': {
             'method_name': 'anosim',
@@ -177,8 +178,10 @@ def analyze():
             'test_statistic': 0.893477,
             'p_value': 0.001,
             'number_of_permutations': 999
-        }
-    })
+        }}, 
+        errors=['test error 1', 'test error 2', 'test error 3']
+        )
+         
     params = dict(
         data = data,
         statMethods = request.form.getlist('statMethod'), #"тут должен быть список выбраных методов Permanova, Anosim или оба"
