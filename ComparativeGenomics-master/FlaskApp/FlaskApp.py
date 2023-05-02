@@ -14,6 +14,7 @@ from hadlers.validator import validate
 from hadlers.validator import validate_tree
 from hadlers.memoryzip_plots import get_zip_buffer
 from sys import getsizeof
+from typing import List
 import os
 import io
 
@@ -187,13 +188,13 @@ def analyze():
         dbscan_eps = request.form.get("DBSCAN__input")
 
     distance_metric = request.form["convergenceType"]
-    error=[]
+    errors=[]
     tree=None
     otu_ids=None
     if distance_metric in ["weighted_unifrac", "unweighted_unifrac"]:
-        tree, otu_ids, error = validate_tree(tree_file=request.files.get("unifrac_data__tree"), otu_file=request.files.get("unifrac_data__otu"))
+        tree, otu_ids, errors = validate_tree(tree_file=request.files.get("unifrac_data__tree"), otu_file=request.files.get("unifrac_data__otu"))
 
-    if len(error) < 1:
+    if len(errors) < 1:
         params = dict(
             data=data,
             statMethods=request.form.getlist('statMethod'),
@@ -208,8 +209,10 @@ def analyze():
         )
 
         data.setStatResults(statistic_test(**params))
+        errors: List[str] = errors  # Сюда передать список из ошибок
 
-        return render_template('statistic_test.html', result=data.getStatResults())
+        return render_template('statistic_test.html', result=data.getStatResults(),
+                               errors=errors)
 
 
 

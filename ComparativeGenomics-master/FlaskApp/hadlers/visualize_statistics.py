@@ -79,7 +79,6 @@ def clusterization(data, clusterMethods, eps=0.05, n_clusters="2", linkage='ward
 
     data.setComputedMatrix(distance_matrix)
 
-    print(predictions)
     return distance_matrix, predictions
 
 
