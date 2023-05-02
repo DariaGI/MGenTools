@@ -116,6 +116,7 @@ def statistic_test(data, statMethods, clusterMethods, eps=0.05, distance_metric=
                                                       random_state=random_state, tree=tree, otu_ids=otu_ids)
         sample_md = pd.DataFrame(predictions, index=list(strains), columns=["subject"])
         if 'anosim' in statMethods:
+            print(anosim)
             test_result["ANOSIM"] = [
                 *anosim(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)]
         if 'permanova' in statMethods:
