@@ -126,7 +126,12 @@ exportFormatSelect.addEventListener('click', async () => {
 
 document.getElementById('analyzeBtn').addEventListener('click', async () => {
     const formElem = document.getElementById('analyzeForm');
+    const preFormData = new FormData(document.getElementById('vslForm'));
     const formData = new FormData(formElem);
+
+    for (const [key, value] of preFormData.entries()) {
+        formData.append(key, value);
+    }
 
     console.debug('Провести анализ: ', formData);
 
@@ -135,7 +140,5 @@ document.getElementById('analyzeBtn').addEventListener('click', async () => {
         url: '/analyze',
         data: formData
     })
-    const resultHtml = document.createElement('div');
-    resultHtml.innerHTML = response;
-    document.body.append(resultHtml);
+    document.getElementById('analyzeResult').innerHTML = response;
 });
