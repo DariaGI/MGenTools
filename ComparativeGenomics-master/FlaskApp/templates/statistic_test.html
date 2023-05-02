@@ -1,3 +1,27 @@
+<style>
+    #analyzeResult table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    #analyzeResult table thead th {
+        background-color: #3c6382;
+        color: #ffffff;
+    }
+
+    #analyzeResult table thead th,
+    #analyzeResult table tbody td {
+        padding: 10px;
+    }
+
+    #analyzeResult tbody tr:nth-child(even) {
+        background-color: #f5f6fa;
+    }
+
+    #analyzeResult tbody tr:nth-child(odd) {
+        background-color: #dcdde1;
+    }
+</style>
 {% if errors %}
 <h3>При выполнении анализа обнаруженны ошибки: </h3>
 <ol>
@@ -10,13 +34,13 @@
 <table>
     <thead>
         <tr>
-            <td>Method name</td>
-            <td>Test statistic name</td>
-            <td>Sample size</td>
-            <td>Number of groups</td>
-            <td>Test statistic</td>
-            <td>P-Value</td>
-            <td>Number of Permutations</td>
+            <th>Method name</th>
+            <th>Test statistic name</th>
+            <th>Sample size</th>
+            <th>Number of groups</th>
+            <th>Test statistic</th>
+            <th>P-Value</th>
+            <th>Number of Permutations</th>
         </tr>
     </thead>
     <tbody>
