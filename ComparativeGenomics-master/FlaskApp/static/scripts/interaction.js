@@ -6,9 +6,9 @@ function chooseAll(source) {
         var tag_name = 'name';
         var ctgButtons = document.getElementsByName("ctgLabel");
 
-        for (let ctgButton of ctgButtons) {
+        for (const ctgButton of ctgButtons) {
             ctgButton.className = 'category-btn btn btn1';
-            ctgButton.classList.add(source.checked ? 'btn-secondary' : ' btn-outline-secondary')
+            ctgButton.classList.add(source.checked ? 'btn-secondary' : 'btn-outline-secondary')
         }
     }
     else {
