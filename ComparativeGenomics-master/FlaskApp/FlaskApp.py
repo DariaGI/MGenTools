@@ -11,6 +11,7 @@ from hadlers.counter import countFunctions
 from hadlers.visualize_statistics import buildPlots
 from hadlers.visualize_statistics import statistic_test
 from hadlers.validator import validate
+from hadlers.validator import validate_tree
 from hadlers.memoryzip_plots import get_zip_buffer
 from sys import getsizeof
 import os
@@ -125,11 +126,10 @@ def visualize():
         linkage=request.form['linkage'],
         distance_metric=request.form["convergenceType"],
         random_state=random_state,
-        eps=dbscan_eps
+        eps=dbscan_eps,
+        tree=request.files.get("unifrac_data__tree"),
+        otu_ids=request.files.get("unifrac_data__otu")
     )
-
-    # print(request.form["convergenceType"])
-
     
     data.setPlots(buildPlots(**params))
     
@@ -164,39 +164,54 @@ def uploadBreakdown():
     data.setBreakdown(validated)
     return  render_template("breakdown.html", df=data.getBreakdown(), error=error)
 
-
 @app.route('/analyze', methods=['POST'])
 def analyze():
     """Проведение оценки статистической достоверности различий на странице анализа"""
-    errors: List[str] = []  # Сюда передать список из ошибок 
-    return render_template('statistic_test.html', result={
-        'anosim': {
-            'method_name': 'anosim',
-            'test_statistic_name': 'R',
-            'sample_size': 30, 
-            'number_of_groups': 3,
-            'test_statistic': 0.893477,
-            'p_value': 0.001,
-            'number_of_permutations': 999
-        }}, 
-        errors=['test error 1', 'test error 2', 'test error 3']
-        )
-         
-    params = dict(
-        data = data,
-        statMethods = request.form.getlist('statMethod'), #"тут должен быть список выбраных методов Permanova, Anosim или оба"
-        clusterMethods = request.form.getlist('clusterMethod'),
-        distance_metric = "",
-        n_clusters= request.form['n_clusters'],
-        linkage= request.form['linkage'],
-        tree="",
-        otu_ids="",
-        random_state="",
-    )
-    # print(params)
-    data.setStatResults(statistic_test(**params))
+    # return render_template('statistic_test.html', result={
+    #     'anosim': {
+    #         'method_name': 'anosim',
+    #         'test_statistic_name': 'R',
+    #         'sample_size': 30,
+    #         'number_of_groups': 3,
+    #         'test_statistic': 0.893477,
+    #         'p_value': 0.001,
+    #         'number_of_permutations': 999
+    #     }
+    # })
 
-    return render_template('statistic_test.html', data={'result': '123'})
+    random_state = 0
+    dbscan_eps = 0.05
+    if bool(request.form.get('bayesian_gaussian_mixture__input')):
+        random_state = request.form.get('bayesian_gaussian_mixture__input')
+    if bool(request.form.get("DBSCAN__input")):
+        dbscan_eps = request.form.get("DBSCAN__input")
+
+    distance_metric = request.form["convergenceType"]
+    error=[]
+    tree=None
+    otu_ids=None
+    if distance_metric in ["weighted_unifrac", "unweighted_unifrac"]:
+        tree, otu_ids, error = validate_tree(tree_file=request.files.get("unifrac_data__tree"), otu_file=request.files.get("unifrac_data__otu"))
+
+    if len(error) < 1:
+        params = dict(
+            data=data,
+            statMethods=request.form.getlist('statMethod'),
+            clusterMethods=request.form.getlist('clusterMethod'),
+            distance_metric=distance_metric,
+            n_clusters=request.form['n_clusters'],
+            linkage=request.form['linkage'],
+            tree=tree,
+            otu_ids=otu_ids,
+            random_state=random_state,
+            eps=dbscan_eps
+        )
+
+        data.setStatResults(statistic_test(**params))
+
+        return render_template('statistic_test.html', result=data.getStatResults())
+
+
 
 
 if __name__ == "__main__":
