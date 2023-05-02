@@ -44,26 +44,19 @@
         </tr>
     </thead>
     <tbody>
-        {% if result.anosim %}
+        {% if result.ANOSIM %}
         <tr>
-            <td>{{ result.anosim.method_name }}</td>
-            <td>{{ result.anosim.test_statistic_name }}</td>
-            <td>{{ result.anosim.sample_size }}</td>
-            <td>{{ result.anosim.number_of_groups }}</td>
-            <td>{{ result.anosim.test_statisctic }}</td>
-            <td>{{ result.anosim.p_value }}</td>
-            <td>{{ result.anosim.number_of_permutations }}</td>
+            {% for cell in result.ANOSIM %}
+                <td>{{ cell }}</td>
+            {% endfor %}
         </tr>
         {% endif %}
-        {% if result.permanova %}
+        {% endif %}
+        {% if result.PERMANOVA %}
         <tr>
-            <td>{{ result.permanova.method_name }}</td>
-            <td>{{ result.permanova.test_statistic_name }}</td>
-            <td>{{ result.permanova.sample_size }}</td>
-            <td>{{ result.permanova.number_of_groups }}</td>
-            <td>{{ result.permanova.test_statisctic }}</td>
-            <td>{{ result.permanova.p_value }}</td>
-            <td>{{ result.permanova.number_of_permutations }}</td>
+            {% for cell in result.PERMANOVA %}
+                <td>{{ cell }}</td>
+            {% endfor %}
         </tr>
         {% endif %}
     </tbody>
