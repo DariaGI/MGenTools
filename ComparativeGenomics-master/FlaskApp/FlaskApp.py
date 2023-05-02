@@ -192,9 +192,11 @@ def analyze():
     tree=None
     otu_ids=None
     if distance_metric in ["weighted_unifrac", "unweighted_unifrac"]:
-        tree, otu_ids, errors = validate_tree(tree_file=request.files.get("unifrac_data__tree"), otu_file=request.files.get("unifrac_data__otu"))
+        tree, otu_ids, errors = validate_tree(tree_file=request.files.get("unifrac_data__tree"),
+                                              otu_file=request.files.get("unifrac_data__otu"))
 
     if len(errors) < 1:
+        print("test")
         params = dict(
             data=data,
             statMethods=request.form.getlist('statMethod'),
@@ -207,12 +209,13 @@ def analyze():
             random_state=random_state,
             eps=dbscan_eps
         )
-
         data.setStatResults(statistic_test(**params))
         errors: List[str] = errors  # Сюда передать список из ошибок
 
-        return render_template('statistic_test.html', result=data.getStatResults(),
-                               errors=errors)
+        print(params)
+        print(data.getStatResults())
+
+    return render_template('statistic_test.html', result=data.getStatResults(), errors=errors)
 
 
 
