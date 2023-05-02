@@ -15,7 +15,8 @@
 .scroll-table thead th {
 	text-align: left;
 	padding: 10px 15px;
-	background: #6c757d;
+	background: #565d63;
+	color: #ffffff;
 	font-size: 14px;
 }
 .scroll-table tbody td {
@@ -49,9 +50,10 @@
 .scroll-table-h thead th {
 	width: 110px;
 	padding: 10px 15px;
-	background: #6c757d;
+	background: #565d63;
 	font-size: 14px;
 	text-align: left;
+	color: #ffffff;
 }
 
 .scroll-table-h tbody td {
