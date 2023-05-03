@@ -21,6 +21,7 @@ def clusterization(data, clusterMethods, eps=0.05, n_clusters="2", linkage='ward
                    random_state=None, tree=None, otu_ids=None):
     genes_count = data.getCount()
     distance_matrix = data.getComputedMatrix()
+    print(distance_metric)
     print(distance_matrix.keys())
     predictions = []
 

@@ -117,24 +117,41 @@ def visualize():
     if bool(request.form.get("DBSCAN__input")):
         dbscan_eps = request.form.get("DBSCAN__input")
 
+    errors=[]
+    tree=None
+    otu_ids=None
+    distance_metric = request.form["convergenceType"]
 
-    params = dict(
-        data=data,
-        methods=request.form.getlist('method'),
-        perplexity=request.form['perplexity'],
-        clusterMethods=request.form.getlist('clusterMethod'),
-        n_clusters=request.form['n_clusters'],
-        linkage=request.form['linkage'],
-        distance_metric=request.form["convergenceType"],
-        random_state=random_state,
-        eps=dbscan_eps,
-        tree=request.files.get("unifrac_data__tree"),
-        otu_ids=request.files.get("unifrac_data__otu")
-    )
+    if distance_metric in ["weighted_unifrac", "unweighted_unifrac"]:
+        if request.files.get("unifrac_data__tree") and request.files.get("unifrac_data__otu"):
+            errors, tree, otu_ids = validate_tree(tree_file=request.files.get("unifrac_data__tree"),
+                                                      otu_file=request.files.get("unifrac_data__otu"))
+        else:
+            if not request.files.get("unifrac_data__tree"):
+                errors.append("не загружен файл с деревом")
+            if not request.files.get("unifrac_data__otu"):
+                errors.append("не загружен файл с otu_ids")
+
+    if len(errors) < 1:
+        params = dict(
+            data=data,
+            methods=request.form.getlist('method'),
+            perplexity=request.form['perplexity'],
+            clusterMethods=request.form.getlist('clusterMethod'),
+            n_clusters=request.form['n_clusters'],
+            linkage=request.form['linkage'],
+            distance_metric=distance_metric,
+            random_state=random_state,
+            eps=dbscan_eps,
+            tree=tree,
+            otu_ids=otu_ids
+        )
     
-    data.setPlots(buildPlots(**params))
+        data.setPlots(buildPlots(**params))
+
+    errors: List[str] = errors  # Сюда передать список из ошибок
     
-    return render_template("analisisVsl.html", plots=data.getPlots())
+    return render_template("analisisVsl.html", plots=data.getPlots(), errors=errors)
 
 @app.route('/download/<type>/<filename>', methods=['get'])
 def download(type, filename):
@@ -168,18 +185,6 @@ def uploadBreakdown():
 @app.route('/analyze', methods=['POST'])
 def analyze():
     """Проведение оценки статистической достоверности различий на странице анализа"""
-    # return render_template('statistic_test.html', result={
-    #     'anosim': {
-    #         'method_name': 'anosim',
-    #         'test_statistic_name': 'R',
-    #         'sample_size': 30,
-    #         'number_of_groups': 3,
-    #         'test_statistic': 0.893477,
-    #         'p_value': 0.001,
-    #         'number_of_permutations': 999
-    #     }
-    # })
-
     random_state = 0
     dbscan_eps = 0.05
     if bool(request.form.get('bayesian_gaussian_mixture__input')):
@@ -211,7 +216,6 @@ def analyze():
                 errors.append("не загружен файл с otu_ids")
 
     if len(errors) < 1:
-        print("test")
         params = dict(
             data=data,
             statMethods=request.form.getlist('statMethod'),
