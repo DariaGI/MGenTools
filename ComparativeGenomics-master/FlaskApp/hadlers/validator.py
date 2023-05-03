@@ -40,22 +40,23 @@ def validate(data, type):
 def validate_tree(tree_file, otu_file):
     tree=""
     otu_ids=""
-    errors=[]
-    if tree_file.split('.')[-1] == "txt":
+    unifrac_errors = []
+    if tree_file.filename.split('.')[-1] == "txt":
         with open(tree_file) as f:
             tree_contents = f.read()
         tree = TreeNode.read(StringIO(tree_contents))
     else:
-        errors.append("неверный формат дерева")
+        unifrac_errors.append("неверный формат дерева, нужен 'txt'")
 
-    if otu_file.split('.')[-1] == "txt":
+    if otu_file.filename.split('.')[-1] == "txt":
         with open(otu_file) as f:
             otu_ids_contents = f.read()
         otu_ids = re.sub("['|\n|' '|$|&|?]", "", otu_ids_contents).split(",")
     else:
-        errors.append("неверный формат otu_ids")
+        unifrac_errors.append("неверный формат otu_ids, нужен 'txt'")
 
-    return errors, tree, otu_ids
+
+    return unifrac_errors, tree, otu_ids
 
 
 

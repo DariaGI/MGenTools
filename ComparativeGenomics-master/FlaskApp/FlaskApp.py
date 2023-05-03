@@ -188,19 +188,34 @@ def analyze():
         dbscan_eps = request.form.get("DBSCAN__input")
 
     distance_metric = request.form["convergenceType"]
+    clusterMethods = []
     errors=[]
     tree=None
     otu_ids=None
+    request_cluster = request.form.getlist('clusterMethod')
+
+    if len(request_cluster) and "none" not in request_cluster:
+        print(request.form.getlist('clusterMethod'))
+        clusterMethods = request_cluster
+    else:
+        errors.append("необходимо выбрать тип кластеризации")
+
     if distance_metric in ["weighted_unifrac", "unweighted_unifrac"]:
-        tree, otu_ids, errors = validate_tree(tree_file=request.files.get("unifrac_data__tree"),
-                                              otu_file=request.files.get("unifrac_data__otu"))
+        if request.files.get("unifrac_data__tree") and request.files.get("unifrac_data__otu"):
+            errors, tree, otu_ids = validate_tree(tree_file=request.files.get("unifrac_data__tree"),
+                                                      otu_file=request.files.get("unifrac_data__otu"))
+        else:
+            if not request.files.get("unifrac_data__tree"):
+                errors.append("не загружен файл с деревом")
+            if not request.files.get("unifrac_data__otu"):
+                errors.append("не загружен файл с otu_ids")
 
     if len(errors) < 1:
         print("test")
         params = dict(
             data=data,
             statMethods=request.form.getlist('statMethod'),
-            clusterMethods=request.form.getlist('clusterMethod'),
+            clusterMethods=clusterMethods,
             distance_metric=distance_metric,
             n_clusters=request.form['n_clusters'],
             linkage=request.form['linkage'],
@@ -209,15 +224,13 @@ def analyze():
             random_state=random_state,
             eps=dbscan_eps
         )
-        data.setStatResults(statistic_test(**params))
-        errors: List[str] = errors  # Сюда передать список из ошибок
 
-        print(params)
-        print(data.getStatResults())
+        errors, stat_result = statistic_test(**params)
+        data.setStatResults(stat_result)
+
+    errors: List[str] = errors  # Сюда передать список из ошибок
 
     return render_template('statistic_test.html', result=data.getStatResults(), errors=errors)
-
-
 
 
 if __name__ == "__main__":

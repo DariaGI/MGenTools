@@ -102,6 +102,7 @@ def statistic_test(data, statMethods, clusterMethods, eps=0.05, distance_metric=
                    tree=None, otu_ids=None, random_state=None):
     genes_count = data.getCount()
     test_result = {}
+    errors = []
 
     if genes_count.is_empty():
         test_result["No data selected"] = []
@@ -115,16 +116,20 @@ def statistic_test(data, statMethods, clusterMethods, eps=0.05, distance_metric=
                                                       linkage=linkage,
                                                       random_state=random_state, tree=tree, otu_ids=otu_ids)
         sample_md = pd.DataFrame(predictions, index=list(strains), columns=["subject"])
-        if 'anosim' in statMethods:
-            anosim_result = [*anosim(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)]
-            anosim_result[4] = round(anosim_result[4], 3)
-            test_result["ANOSIM"] = anosim_result
-        if 'permanova' in statMethods:
-            permanova_result = [*permanova(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)]
-            permanova_result[4] = round(permanova_result[4], 3)
-            test_result["PERMANOVA"] = permanova_result
+        if len(set(predictions)) > 1:
+            if 'anosim' in statMethods:
+                anosim_result = [*anosim(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)]
+                anosim_result[4] = round(anosim_result[4], 3)
+                test_result["ANOSIM"] = anosim_result
+            if 'permanova' in statMethods:
+                permanova_result = [*permanova(distance_matrix[distance_metric], sample_md, column='subject', permutations=999)]
+                permanova_result[4] = round(permanova_result[4], 3)
+                test_result["PERMANOVA"] = permanova_result
 
-        return test_result
+        else:
+            errors.append("необходимо выбрать другой способ кластеризации")
+
+        return errors, test_result
 
     else:
         test_result["Too few strains selected"] = []
