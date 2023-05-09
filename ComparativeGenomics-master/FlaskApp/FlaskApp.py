@@ -11,7 +11,7 @@ from hadlers.counter import countFunctions
 from hadlers.visualize_statistics import buildPlots
 from hadlers.visualize_statistics import statistic_test
 from hadlers.validator import validate
-from hadlers.validator import validate_tree
+# from hadlers.validator import validate_tree
 from hadlers.memoryzip_plots import get_zip_buffer
 from sys import getsizeof
 from typing import List
@@ -118,19 +118,19 @@ def visualize():
         dbscan_eps = request.form.get("DBSCAN__input")
 
     errors=[]
-    tree=None
-    otu_ids=None
-    distance_metric = request.form["convergenceType"]
+    # tree=None
+    # otu_ids=None
+    # distance_metric = request.form["convergenceType"]
 
-    if distance_metric in ["weighted_unifrac", "unweighted_unifrac"]:
-        if request.files.get("unifrac_data__tree") and request.files.get("unifrac_data__otu"):
-            errors, tree, otu_ids = validate_tree(tree_file=request.files.get("unifrac_data__tree"),
-                                                      otu_file=request.files.get("unifrac_data__otu"))
-        else:
-            if not request.files.get("unifrac_data__tree"):
-                errors.append("не загружен файл с деревом")
-            if not request.files.get("unifrac_data__otu"):
-                errors.append("не загружен файл с otu_ids")
+    # if distance_metric in ["weighted_unifrac", "unweighted_unifrac"]:
+    #     if request.files.get("unifrac_data__tree") and request.files.get("unifrac_data__otu"):
+    #         errors, tree, otu_ids = validate_tree(tree_file=request.files.get("unifrac_data__tree"),
+    #                                                   otu_file=request.files.get("unifrac_data__otu"))
+    #     else:
+    #         if not request.files.get("unifrac_data__tree"):
+    #             errors.append("не загружен файл с деревом")
+    #         if not request.files.get("unifrac_data__otu"):
+    #             errors.append("не загружен файл с otu_ids")
 
     if len(errors) < 1:
         params = dict(
@@ -140,11 +140,11 @@ def visualize():
             clusterMethods=request.form.getlist('clusterMethod'),
             n_clusters=request.form['n_clusters'],
             linkage=request.form['linkage'],
-            distance_metric=distance_metric,
+            distance_metric=request.form["convergenceType"],
             random_state=random_state,
-            eps=dbscan_eps,
-            tree=tree,
-            otu_ids=otu_ids
+            eps=dbscan_eps
+            # tree=tree,
+            # otu_ids=otu_ids
         )
     
         data.setPlots(buildPlots(**params))
@@ -192,11 +192,11 @@ def analyze():
     if bool(request.form.get("DBSCAN__input")):
         dbscan_eps = request.form.get("DBSCAN__input")
 
-    distance_metric = request.form["convergenceType"]
+    # distance_metric = request.form["convergenceType"]
     clusterMethods = []
     errors=[]
-    tree=None
-    otu_ids=None
+    # tree=None
+    # otu_ids=None
     request_cluster = request.form.getlist('clusterMethod')
 
     if len(request_cluster) and "none" not in request_cluster:
@@ -205,26 +205,26 @@ def analyze():
     else:
         errors.append("необходимо выбрать тип кластеризации")
 
-    if distance_metric in ["weighted_unifrac", "unweighted_unifrac"]:
-        if request.files.get("unifrac_data__tree") and request.files.get("unifrac_data__otu"):
-            errors, tree, otu_ids = validate_tree(tree_file=request.files.get("unifrac_data__tree"),
-                                                      otu_file=request.files.get("unifrac_data__otu"))
-        else:
-            if not request.files.get("unifrac_data__tree"):
-                errors.append("не загружен файл с деревом")
-            if not request.files.get("unifrac_data__otu"):
-                errors.append("не загружен файл с otu_ids")
+    # if distance_metric in ["weighted_unifrac", "unweighted_unifrac"]:
+    #     if request.files.get("unifrac_data__tree") and request.files.get("unifrac_data__otu"):
+    #         errors, tree, otu_ids = validate_tree(tree_file=request.files.get("unifrac_data__tree"),
+    #                                                   otu_file=request.files.get("unifrac_data__otu"))
+    #     else:
+    #         if not request.files.get("unifrac_data__tree"):
+    #             errors.append("не загружен файл с деревом")
+    #         if not request.files.get("unifrac_data__otu"):
+    #             errors.append("не загружен файл с otu_ids")
 
     if len(errors) < 1:
         params = dict(
             data=data,
             statMethods=request.form.getlist('statMethod'),
             clusterMethods=clusterMethods,
-            distance_metric=distance_metric,
+            distance_metric=request.form["convergenceType"],
             n_clusters=request.form['n_clusters'],
             linkage=request.form['linkage'],
-            tree=tree,
-            otu_ids=otu_ids,
+            # tree=tree,
+            # otu_ids=otu_ids,
             random_state=random_state,
             eps=dbscan_eps
         )

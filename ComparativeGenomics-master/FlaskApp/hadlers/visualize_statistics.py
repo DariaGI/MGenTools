@@ -16,13 +16,19 @@ try:
 except ImportError:
     print("!ERROR! Could not import skbio ")
 
+# from rpy2.robjects import pandas2ri, r, DataFrame
+# from rpy2.robjects.packages import importr
+# import rpy2.rinterface as ri
+# ri.initr()
+# pandas2ri.activate()
+
 
 def clusterization(data, clusterMethods, eps=0.05, n_clusters="2", linkage='ward', distance_metric='euclidean',
                    random_state=None, tree=None, otu_ids=None):
     genes_count = data.getCount()
     distance_matrix = data.getComputedMatrix()
-    print(distance_metric)
-    print(distance_matrix.keys())
+    print(otu_ids)
+    print(tree)
     predictions = []
 
     if distance_metric == 'euclidean' and distance_metric not in distance_matrix:
@@ -31,17 +37,17 @@ def clusterization(data, clusterMethods, eps=0.05, n_clusters="2", linkage='ward
 
     else:
         if distance_metric not in distance_matrix:
-            dist_matrix = precomputed_matrix(genes_count, distance_metric=distance_metric)
+            dist_matrix = precomputed_matrix(genes_count, distance_metric=distance_metric, tree=tree, otu_ids=otu_ids)
             distance_matrix[distance_metric] = dist_matrix
-            if (
-                    "k_avg" in clusterMethods or 'bayesian_gaussian_mixture' in clusterMethods) and 'euclidean' not in distance_matrix:
+            if ("k_avg" in clusterMethods or 'bayesian_gaussian_mixture' in clusterMethods) \
+                    and 'euclidean' not in distance_matrix:
                 eucl_matrix = precomputed_matrix(genes_count, distance_metric='euclidean')
                 distance_matrix['euclidean'] = eucl_matrix
 
         elif len(clusterMethods) < 1 and distance_metric not in distance_matrix:
             eucl_matrix = precomputed_matrix(genes_count, distance_metric='euclidean')
             distance_matrix['euclidean'] = eucl_matrix
-            dist_matrix = precomputed_matrix(genes_count, distance_metric=distance_metric)
+            dist_matrix = precomputed_matrix(genes_count, distance_metric=distance_metric, tree=tree, otu_ids=otu_ids)
             distance_matrix[distance_metric] = dist_matrix
 
     if 'k_avg' in clusterMethods:
@@ -85,15 +91,15 @@ def clusterization(data, clusterMethods, eps=0.05, n_clusters="2", linkage='ward
 
 def precomputed_matrix(genes_count, distance_metric='euclidean', tree=None, otu_ids=None):
     bc_dm = []
-
     strains = genes_count["Strain"]
     features = genes_count.columns[1:]
     genes_count_cut = np.swapaxes(np.array(genes_count[features]), 0, 1)
+    # if distance_metric in ["euclidean", "braycurtis", "jaccard"]:
+    bc_dm = beta_diversity(distance_metric, genes_count_cut, strains)
+    # elif distance_metric in ["weighted_unifrac", "unweighted_unifrac"]:
+    #     bc_dm = beta_diversity(distance_metric, genes_count_cut, strains, tree=tree, otu_ids=otu_ids)
+    #     print(bc_dm)
 
-    if distance_metric in ["euclidean", "braycurtis", "jaccard"]:
-        bc_dm = beta_diversity(distance_metric, genes_count_cut, strains)
-    elif distance_metric in ["weighted_unifrac", "unweighted_unifrac"]:
-        bc_dm = beta_diversity(distance_metric, genes_count_cut, strains, tree=tree, otu_ids=otu_ids)
 
     return bc_dm
 
@@ -105,13 +111,15 @@ def statistic_test(data, statMethods, clusterMethods, eps=0.05, distance_metric=
     test_result = {}
     errors = []
 
+
     if genes_count.is_empty():
-        test_result["No data selected"] = []
-        return test_result
+        errors.append("данные не выбраны")
+        return errors, test_result
 
     strains = genes_count["Strain"]
 
     if len(strains) > 1:
+
         distance_matrix, predictions = clusterization(data, clusterMethods=clusterMethods,
                                                       distance_metric=distance_metric, eps=eps, n_clusters=n_clusters,
                                                       linkage=linkage,
@@ -134,7 +142,7 @@ def statistic_test(data, statMethods, clusterMethods, eps=0.05, distance_metric=
 
     else:
         test_result["Too few strains selected"] = []
-        return test_result
+        return test_result, errors
 
 
 def match(table_to, table_from):
@@ -219,6 +227,12 @@ def buildPlots(data, methods, clusterMethods, eps=0.05, perplexity="10", n_clust
                 x = np.array([*distance_matrix[distance_metric]])
                 components = pd.DataFrame(data=methodData.fit_transform(x), columns=['Component 1', 'Component 2'])
                 plots['MDS'] = buildScatter(data, components, predictions)
+            #     vegan = importr("vegan")
+            #     x = np.array([*distance_matrix[distance_metric]])
+            #     methodData = vegan.metaMDS(x, k=2)
+            #     MDS_scores = r.scores(methodData)
+            #     components = pd.DataFrame({'Component_1': MDS_scores[:, 0], 'Component_2': MDS_scores[:, 1]})
+            #     plots['NMDS'] = buildScatter(data, components, predictions)
 
             if 't_sne' in methods:
                 methodData = TSNE(random_state=0, perplexity=float(perplexity), metric="precomputed", init=t_sne_init)
