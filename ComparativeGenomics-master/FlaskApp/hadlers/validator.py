@@ -60,5 +60,12 @@ def validate(data, type):
 #
 #     return unifrac_errors, tree, otu_ids
 
+def is_int(str):
+    try:
+        int(str)
+        return True
+    except ValueError:
+         return False
+
 
 

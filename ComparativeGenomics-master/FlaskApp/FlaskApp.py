@@ -11,7 +11,7 @@ from hadlers.counter import countFunctions
 from hadlers.visualize_statistics import buildPlots
 from hadlers.visualize_statistics import statistic_test
 from hadlers.validator import validate
-# from hadlers.validator import validate_tree
+from hadlers.validator import is_int
 from hadlers.memoryzip_plots import get_zip_buffer
 from sys import getsizeof
 from typing import List
@@ -117,7 +117,11 @@ def visualize():
     if bool(request.form.get("DBSCAN__input")):
         dbscan_eps = request.form.get("DBSCAN__input")
 
+
     errors=[]
+
+    if not is_int(random_state):
+        errors.append("Значение random_state должно быть целым")
     # tree=None
     # otu_ids=None
     # distance_metric = request.form["convergenceType"]
@@ -134,9 +138,6 @@ def visualize():
 
     perplexity_numb = request.form['perplexity']
     strains_numb = len(data.getCount())
-    # if "." in perplexity_numb or "," in perplexity_numb:
-    #     errors.append("Значение perpelxity должно быть целым числом")
-    # else:
     if float(perplexity_numb) >= strains_numb:
         errors.append("Значение perpelxity должно быть меньше количества штаммов: " + str(len(data.getCount())))
     elif float(perplexity_numb)==0:
@@ -208,6 +209,9 @@ def analyze():
     errors=[]
     # tree=None
     # otu_ids=None
+    if not is_int(random_state):
+        errors.append("Значение random_state должно быть целым")
+
     request_cluster = request.form.getlist('clusterMethod')
 
     if len(request_cluster) and "none" not in request_cluster:
