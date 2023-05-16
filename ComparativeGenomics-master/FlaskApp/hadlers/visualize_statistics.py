@@ -36,15 +36,16 @@ def clusterization(data, clusterMethods, eps=0.05, n_clusters="2", linkage='ward
         distance_matrix['euclidean'] = x
 
     else:
-        if distance_metric not in distance_matrix:
+        if len(clusterMethods) > 0 and distance_metric not in distance_matrix:
             dist_matrix = precomputed_matrix(genes_count, distance_metric=distance_metric, tree=tree, otu_ids=otu_ids)
             distance_matrix[distance_metric] = dist_matrix
-            if ("k_avg" in clusterMethods or 'bayesian_gaussian_mixture' in clusterMethods) \
+
+        if len(clusterMethods) > 0 and ("k_avg" in clusterMethods or 'bayesian_gaussian_mixture' in clusterMethods) \
                     and 'euclidean' not in distance_matrix:
                 eucl_matrix = precomputed_matrix(genes_count, distance_metric='euclidean')
                 distance_matrix['euclidean'] = eucl_matrix
 
-        elif len(clusterMethods) < 1 and distance_metric not in distance_matrix:
+        if len(clusterMethods) < 1 and distance_metric not in distance_matrix:
             eucl_matrix = precomputed_matrix(genes_count, distance_metric='euclidean')
             distance_matrix['euclidean'] = eucl_matrix
             dist_matrix = precomputed_matrix(genes_count, distance_metric=distance_metric, tree=tree, otu_ids=otu_ids)
