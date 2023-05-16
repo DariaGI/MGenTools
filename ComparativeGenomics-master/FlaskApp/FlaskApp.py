@@ -132,6 +132,17 @@ def visualize():
     #         if not request.files.get("unifrac_data__otu"):
     #             errors.append("не загружен файл с otu_ids")
 
+    perplexity_numb = request.form['perplexity']
+    strains_numb = len(data.getCount())
+    # if "." in perplexity_numb or "," in perplexity_numb:
+    #     errors.append("Значение perpelxity должно быть целым числом")
+    # else:
+    if float(perplexity_numb) >= strains_numb:
+        errors.append("Значение perpelxity должно быть меньше количества штаммов: " + str(len(data.getCount())))
+    elif float(perplexity_numb)==0:
+        errors.append("Значение perpelxity должно быть больше 0")
+
+
     if len(errors) < 1:
         params = dict(
             data=data,

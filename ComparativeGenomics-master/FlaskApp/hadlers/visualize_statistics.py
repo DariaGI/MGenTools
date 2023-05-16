@@ -178,7 +178,7 @@ def buildScatter(data, components, predictions):
     return pltJSON
 
 
-def buildPlots(data, methods, clusterMethods, eps=0.05, perplexity="10", n_clusters='2', linkage='ward',
+def buildPlots(data, methods, clusterMethods, eps=0.05, perplexity="2", n_clusters='2', linkage='ward',
                distance_metric='euclidean', tree=None, otu_ids=None, random_state=None):
     plots = {}
     genes_count = data.getCount()
