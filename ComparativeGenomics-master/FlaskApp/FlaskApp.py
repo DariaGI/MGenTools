@@ -218,7 +218,7 @@ def analyze():
         print(request.form.getlist('clusterMethod'))
         clusterMethods = request_cluster
     else:
-        errors.append("необходимо выбрать тип кластеризации")
+        errors.append("Необходимо выбрать тип кластеризации")
 
     # if distance_metric in ["weighted_unifrac", "unweighted_unifrac"]:
     #     if request.files.get("unifrac_data__tree") and request.files.get("unifrac_data__otu"):

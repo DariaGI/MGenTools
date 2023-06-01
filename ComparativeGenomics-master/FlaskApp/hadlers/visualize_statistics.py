@@ -137,7 +137,7 @@ def statistic_test(data, statMethods, clusterMethods, eps=0.05, distance_metric=
                 test_result["PERMANOVA"] = permanova_result
 
         else:
-            errors.append("необходимо выбрать другой способ кластеризации")
+            errors.append("Кластеры в выборке не были выявлены с помощью данного типа кластеризации, попробуйте другой метод.")
 
         return errors, test_result
 
@@ -169,10 +169,18 @@ def buildScatter(data, components, predictions):
     else:
         components['Cluster'] = 'not predicted'
 
+    def improve_text_position(x):
+        """ it is more efficient if the x values are sorted """
+        # fix indentation
+        positions = ['top center', 'bottom center']  # you can add more: left center ...
+        return [positions[i % len(positions)] for i in range(len(x))]
+
     fig = px.scatter(components, x='Component 1', y='Component 2', color='Cluster', symbol='Breakdown Type',
                      text='Strain', color_discrete_sequence=px.colors.qualitative.Dark24)
-    fig.layout = plotly.graph_objects.Layout(plot_bgcolor='#ffffff', width=700, height=500)
-    fig.update_traces(textposition='top left', marker_size=10)
+    fig.layout = plotly.graph_objects.Layout(plot_bgcolor='#ffffff', width=900, height=700)
+
+    # fig.update_traces(textposition='top left', marker_size=10)
+    fig.update_traces(textposition=improve_text_position(components['Component 1']), marker_size=10)
 
     pltJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return pltJSON
