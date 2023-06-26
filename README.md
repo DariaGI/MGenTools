@@ -1,7 +1,9 @@
 # MGenTools
 
 The comparative genomics toolkit is implemented as a simple web application for users without programming skills.
+
 The goal of the web application is to automate the analysis of genomic annotations from Rapid Annotations using Subsystems Technology.
+
 It includes reclassification, computation and analysis applying:
 - clustering algorithms: k-means, Agglomerative Clustering, DBSCAN, Bayesian Gaussian Mixture,
 - dimensionality reduction methods: PCA, MDS, t-SNE,
@@ -18,6 +20,8 @@ docker run -p 5000:5000 -d -it test-polars-docker bash
 
 ### Install packages
 It is possible to do through Docker Desktop Terminal.
+
+
 For version control check requirenments.txt.
 ```bash 
 conda install -c anaconda pandas 
