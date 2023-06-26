@@ -7,6 +7,9 @@ It includes reclassification, computation and analysis applying:
 - dimensionality reduction methods: PCA, MDS, t-SNE,
 - and statistical tests: PERMANOVA, ANOSIM.
 
+### Install Docker Desktop
+https://docs.docker.com/desktop/
+
 ### Start docker
 ```bash
 docker build ./ComparativeGenomics-master/ -t test-polars-docker
@@ -14,6 +17,7 @@ docker run -p 5000:5000 -d -it test-polars-docker bash
 ```
 
 ### Install packages
+It is possible to do through Docker Desktop Terminal.
 ```bash 
 conda install -c anaconda pandas 
 conda install -c anaconda flask
