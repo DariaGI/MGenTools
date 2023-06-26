@@ -23,3 +23,7 @@ conda install -c conda-forge pyarrow
 conda install -c conda-forge scikit-bio
 conda install -c plotly plotly
 ```
+### Start web application
+```bash 
+python3 FlaskApp/FlaskApp.py
+```
