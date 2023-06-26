@@ -23,6 +23,14 @@ conda install -c conda-forge pyarrow
 conda install -c conda-forge scikit-bio
 conda install -c plotly plotly
 ```
+
+### Switch to work mode
+In FlaskApp/FlaskApp.py change:
+```bash 
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')
+```
+
 ### Start web application
 ```bash 
 python3 FlaskApp/FlaskApp.py
