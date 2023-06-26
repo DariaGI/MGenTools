@@ -7,13 +7,13 @@ clustering algorithms: k-means, Agglomerative Clustering, DBSCAN, Bayesian Gauss
 dimensionality reduction methods: PCA, MDS, t-SNE,
 and statistical tests: PERMANOVA, ANOSIM.
 
-### Запуск докер-контейнера
+### Start docker
 ```bash
 docker build ./ComparativeGenomics-master/ -t test-polars-docker
 docker run -p 5000:5000 -d -it test-polars-docker bash
 ```
 
-### Установка библиотек
+### Install packages
 ```bash 
 conda install -c anaconda pandas 
 conda install -c anaconda flask
