@@ -1,6 +1,0 @@
-flask
-pandas
-polars
-pyarrow
-scikit-learn
-plotly
