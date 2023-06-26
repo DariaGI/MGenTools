@@ -18,6 +18,7 @@ docker run -p 5000:5000 -d -it test-polars-docker bash
 
 ### Install packages
 It is possible to do through Docker Desktop Terminal.
+For version control check requirenments.txt.
 ```bash 
 conda install -c anaconda pandas 
 conda install -c anaconda flask
