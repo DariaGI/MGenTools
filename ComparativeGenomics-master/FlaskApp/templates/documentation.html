@@ -14,7 +14,7 @@
         <div class="row mb-2">
             <p class="lead fs-6 text-center text-md-start">
                 Весь процесс анализа осуществляется в разделе <b>АНАЛИЗ</b>.
-                И состоит из 3 этапов: классификации, расчетов и визуализации.
+                И состоит из 3 этапов: классификации, расчетов и самого анализа.
             </p>
         </div>
 
@@ -52,14 +52,14 @@
         </div>
         <div class="row align-items-center">
             <div class="mb-2">
-                <img src="static/images/1.1.png" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
+                <img src="static/images/1.1.PNG" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
             </div>
         </div>
 
         <div class="lead fs-4 text-md-start mb-4">Шаг 2</div>
         <div class="row mb-4 align-items-center">
             <div class="col-lg-6 order-md-2 align-items-center">
-                <img src="static/images/1.2.png" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
+                <img src="static/images/1.2.PNG" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
             </div>
 
             <div class="col-lg-6">
@@ -82,17 +82,13 @@
         <div class="lead fs-4 text-md-start mb-4">Шаг 3</div>
         <div class="row align-items-center">
             <div class="col-lg-8 align-items-center">
-                <img src="static/images/1.3.png" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
+                <img src="static/images/1.3.PNG" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
             </div>
             <div class="col-lg-4">
                 <div class="lead fs-6 text-center text-md-start">
                     <p>
                         Процесс самой классификации может занять несколько минут в зависимости от общего объема загруженных файлов.
-                        В среднем на обработку 25МБ уходит 7 минут.
-                    </p>
-                    <p>
-                        Если вы продолжите загружать выгрузки RAST после классификации, то предыдущие полученные данные не пропадут. Новые
-                        результаты добавятся к старым.
+                        В среднем на обработку 25МБ уходит 2-3 минуты.
                     </p>
                 </div>
             </div>
@@ -114,7 +110,7 @@
         <div class="lead fs-4 text-md-start mb-4">Шаг 4</div>
         <div class="row mb-4 align-items-center">
             <div class="col-lg-7 order-md-2 align-items-center">
-                <img src="static/images/2.1.png" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
+                <img src="static/images/2.1.PNG" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
             </div>
 
             <div class="col-lg-5">
@@ -125,6 +121,7 @@
                         имеется название категории, при нажатии на строку раскрывается список входящих в категорию систем.
                         Вы можете выбрать категории и системы по отдельности или одним нажатием выбрать все категории, все системы в иерархии
                         или все системы в пределах категории.
+    
                     </p>
 
                 </div>
@@ -134,30 +131,32 @@
         <div class="lead fs-4 text-md-start mb-4">Шаг 5</div>
         <div class="row align-items-center mb-4">
             <div class="col-lg-8 align-items-center">
-                <img src="static/images/2.2.png" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
+                <img src="static/images/4.7" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
             </div>
             <div class="col-lg-4">
                 <div class="lead fs-6 text-center text-md-start">
                     <p>
                         Запустите расчеты и в результирующей таблице появятся количественные данные, которые вы затем сможете скачать.
+                        В результате будет сформирована таблица, где категории будут помечены префиксом С_, а системы - префиксом S_, 
+                        с указанием категории, которой они принадлежат.
                     </p>
                 </div>
             </div>
         </div>
 
-        <div class="lead fs-3 text-md-start mb-4"><b>Визуализация</b></div>
+        <div class="lead fs-3 text-md-start mb-4"><b>Анализ</b></div>
         <div class="lead fs-4 text-md-start mb-4">Шаг 6</div>
         <div class="row mb-4 align-items-center">
             <div class="col-lg-5 order-md-2 align-items-center">
-                <img src="static/images/3.1.png" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
+                <img src="static/images/4.6" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
             </div>
 
             <div class="col-lg-7">
                 <div class="lead fs-6 text-center text-md-start">
                     <p>
-                        Последующая визуализация требует выбора методов, с помощью которых будет осуществлено снижение размерности
-                        для представления многомерных данных на плоскости. Поэкспериментируйте с ними и выберите оптимальный метод
-                        для ваших данных.
+                        Для начала проведения анализа вам необходимо выбрать меру различия, которая послужит основой всех последующих методов:
+                         кластеризации, понижения размерности, оценки статистической достоверности.
+                        Поэкспериментируйте с ними, комбинируя методы анализа и меры различия.
                     </p>
 
                 </div>
@@ -167,7 +166,7 @@
         <div class="lead fs-4 text-md-start mb-4">Шаг 7</div>
         <div class="row align-items-center">
             <div class="col-lg-5 align-items-center">
-                <img src="static/images/3.2.png" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
+                <img src="static/images/3.2.PNG" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
             </div>
             <div class="col-lg-7">
                 <div class="lead fs-6 text-center text-md-start">
@@ -190,16 +189,30 @@
         </div>
         <div class="row align-items-center">
             <div class="col-lg-7 align-items-center">
-                <img src="static/images/3.3.png" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
+                <img src="static/images/4.5" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
             </div>
             <div class="col-lg-5">
                 <div class="lead fs-6 text-center text-md-start">
                     <p>
                         Нажмите на кнопку "Построить график" и в результатах визуализации появятся соответствующие вашему выбору 
                         интерактивные графики. Ими можно манипулировать, а также их можно сохранить в формате png.
+                        Выбрав формат рисунка вы можете экспортировать графики, в результате будет скачан архив со всеми графиками,
+                         которые были построены.
                     </p>
                 </div>
             </div>
+            <div class="row align-items-center">
+                <div class="col-lg-7 align-items-center">
+                    <img src="static/images/4.3" class="img-fluid mw-md-150 mw-lg-130 mb-6 mb-md-0 aos-init aos-animate">
+                </div>
+                <div class="col-lg-5">
+                    <div class="lead fs-6 text-center text-md-start">
+                        <p>
+                            В разделе "Оценка статистической достоверности различий" вы можете выбрать один или оба представленых анализа,
+                             их результаты будут опубликованы в таблице.
+                        </p>
+                    </div>
+                </div>
         </div>
 </section>
 {% endblock %}
