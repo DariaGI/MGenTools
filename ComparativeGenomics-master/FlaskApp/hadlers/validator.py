@@ -8,7 +8,7 @@ def template(allowed_file_types, data, columns, error):
     file_type = data.filename.split('.')[-1]
     if file_type in allowed_file_types:
         if file_type =='tsv':
-            content = pl.read_csv(data, sep='\t')
+            content = pl.read_csv(data, separator='\t')
         else:
             content = pl.read_csv(data)
         if set(columns).issubset(content.columns):

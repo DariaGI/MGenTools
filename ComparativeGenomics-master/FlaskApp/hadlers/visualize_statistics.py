@@ -93,13 +93,13 @@ def clusterization(data, clusterMethods, eps=0.05, n_clusters="2", linkage='ward
 def precomputed_matrix(genes_count, distance_metric='euclidean', tree=None, otu_ids=None):
     bc_dm = []
     strains = genes_count["Strain"]
-    features = genes_count.columns[1:]
-    genes_count_cut = np.swapaxes(np.array(genes_count[features]), 0, 1)
-    # if distance_metric in ["euclidean", "braycurtis", "jaccard"]:
+    #for old version of skbio
+    # features = genes_count.columns[1:]
+    # genes_count_cut = np.swapaxes(np.array(genes_count[features]), 0, 1)
+    genes_count_cut = np.array(genes_count[:, 1:])
     bc_dm = beta_diversity(distance_metric, genes_count_cut, strains)
-    # elif distance_metric in ["weighted_unifrac", "unweighted_unifrac"]:
-    #     bc_dm = beta_diversity(distance_metric, genes_count_cut, strains, tree=tree, otu_ids=otu_ids)
-    #     print(bc_dm)
+
+
 
 
     return bc_dm
